@@ -1,0 +1,24 @@
+{
+  "name": "university-class-scheduler",
+  "version": "0.0.1",
+  "description": "Library to generate university class schedule",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikitaKemarskiy/university-class-scheduler.git"
+  },
+  "author": "Кемарський Микита ІП-22мп",
+  "bugs": {
+    "url": "https://github.com/NikitaKemarskiy/university-class-scheduler/issues"
+  },
+  "homepage": "https://github.com/NikitaKemarskiy/university-class-scheduler#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
