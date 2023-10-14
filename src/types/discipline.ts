@@ -1,32 +1,40 @@
-import { RoomType } from "./institution";
-import { WeeklyAvailabilitySchedule } from "./meta";
-
-// Дисципліна. Приклад: "Математичний аналіз"
-export type Discipline = {
-  shortName: string; // "Мат. анал."
-  fullName: string; // "Математичний аналіз"
-  isSelective: boolean; // Чи є дисципліна вибірковою
-}
+import { WeeklyAvailableClasses } from "./meta";
 
 // Тип заняття. Приклад: "Лекційне заняття"
 export type DisciplineClassType = {
+  id: number;
   shortName: string; // "Лек"
-  fullName: string; // "Лекційне заняття", "Практичне заняття", "Лабораторне заняття", "Лекційне заняття online", "Практичне заняття online", "Лабораторне заняття online"
+  fullName: string; // "Лекційне заняття", "Практичне заняття", "Лабораторне заняття"
 }
 
 // Заняття певного типу з дисципліни та вимоги до його проведення.
 // Приклад: "Лекційне заняття з математичного аналізу"
 export type DisciplineClass = {
-  discipline: Discipline;
-  type: DisciplineClassType;
-  roomTypesAppropriate: RoomType[];
-  numberOfRoomsRequired: number; // Кількість аудиторій, що потребується для проведення однієї пари
-  numberOfLecturersPerRoomRequired: number; // Кількість викладачів, що потребується для проведення однієї пари (може бути кілька викладачів на одній парі одночасно)
+  id: number;
+  shortName: string; // "Мат. анал."
+  fullName: string; // "Математичний аналіз"
+  typeId: number;
+  classesPerWeek: number; // Кількість занять на тиждень. Приклад: 0.5 занять на тиждень і цикл 2 тижні – одне заняття на два тижні
+  maxGroupsPerClass: number; // Максимальна кількість груп на одному занятті
+  online: boolean; // Чи заняття онлайн
+  appropriateRoomTypeIds: Array<number>; // Типи аудиторій, що підходять для проведення заняття
+  numberOfRoomsRequired: number; // Кількість аудиторій, що потребується для проведення одного заняття
+  // Кількість викладачів на одну аудиторію, що потребується для проведення одного заняття
+  // (може бути кілька викладачів на одному занятті одночасно).
+  // Це несуворе обмеження, тобто назначається стільки викладачів, скільки дозволяють обмеження,
+  // з намаганням максимізувати до необхідної кількості
+  numberOfLecturersPerRoomRequired: number;
+
+  facultyId?: number; // Опціонально, можливість привʼязати заняття тільки для груп конкретного факультету. Тоді потік складається з груп факультету
+  facultyDepartmentId?: number; // Опціонально, можливість привʼязати заняття тільки для груп конкретної кафедри факультету. Тоді потік складається з груп кафедри
+  // Якщо такі обмеження не виставлені – потік складається з груп всього університету
 }
 
 // Викладач
 export type Lecturer = {
-  // Графік доступності викладача протягом тижня (розклад часу, коли викладач доступний для роботи)
-  weeklyAvailabilitySchedule: WeeklyAvailabilitySchedule;
-  disciplineClasses: DisciplineClass[]; // Заняття, які може проводити викладач
+  id: number;
+  name: string;
+  // Графік доступності викладача протягом тижня (пари, на яких викладач доступний для роботи)
+  weeklyAvailableClasses: WeeklyAvailableClasses;
+  disciplineClassIds: Array<number>; // Заняття, які може проводити викладач
 }

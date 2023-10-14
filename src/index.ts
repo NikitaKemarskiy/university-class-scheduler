@@ -1,57 +1,116 @@
 import {
   Building,
-  DayOfWeek,
-  Discipline,
   DisciplineClass,
   DisciplineClassType,
   Faculty,
   FacultyDepartment,
   Group,
+  GroupType,
   Lecturer,
   Room,
-  Schedule,
+  RoomType,
   ScheduleCell,
   ScheduleOptions
 } from "./types";
 
 export * from "./types";
 
-export abstract class Scheduler {
-  constructor(
-    // Meta
-    protected readonly options: ScheduleOptions,
-    
-    // Groups
-    protected readonly groups: Set<Group>,
-    
-    // Institutions
-    protected readonly buildings: Set<Building>,
-    protected readonly faculties: Set<Faculty>,
-    protected readonly facultyDepartments: Set<FacultyDepartment>,
-    protected readonly rooms: Set<Room>,
-    
-    // Disciplines & lecturers
-    protected readonly disciplines: Set<Discipline>,
-    protected readonly disciplineClassTypes: Set<DisciplineClassType>,
-    protected readonly disciplineClasses: Set<DisciplineClass>,
-    protected readonly lecturers: Set<Lecturer>,
-  ) {}
+export type SchedulerParams = {
+  // Meta
+  options: ScheduleOptions,
+  // Groups
+  groups: Array<Group>,
+  groupTypes: Array<GroupType>,
+  // Institutions
+  buildings: Array<Building>,
+  faculties: Array<Faculty>,
+  facultyDepartments: Array<FacultyDepartment>,
+  rooms: Array<Room>,
+  roomTypes: Array<RoomType>,
+  // Disciplines & lecturers
+  disciplineClassTypes: Array<DisciplineClassType>,
+  disciplineClasses: Array<DisciplineClass>,
+  lecturers: Array<Lecturer>,
+};
 
-  abstract generateSchedule(): Schedule;
+export class Schedule {
+  constructor(private readonly scheduleCells: Array<ScheduleCell>) {}
+
+  // TODO: Implement these filters in more general way (likely with abstraction - implementation)
+  getLecturerScheduleCells(lecturerId: number): Array<ScheduleCell> {
+    // TODO: Add implementation
+    return [];
+  }
+
+  getGroupScheduleCells(groupId: number): Array<ScheduleCell> {
+    // TODO: Add implementation
+    return [];
+  }
+
+  getRoomScheduleCells(roomId: number): Array<ScheduleCell> {
+    // TODO: Add implementation
+    return [];
+  }
 }
 
-export class GeneticAlgorithmScheduler extends Scheduler {
-  generateSchedule(): Schedule {
-    // TODO: Add implementation
+const ID_DUPLICATE_ERROR = 'ID duplicate error';
 
-    return [{
-      [DayOfWeek.MONDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.TUESDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.WEDNESDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.THURSDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.FRIDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.SATURDAY]: new Set<ScheduleCell>(),
-      [DayOfWeek.SUNDAY]: new Set<ScheduleCell>(),
-    }];
+export abstract class Scheduler {
+  // Meta
+  protected options: ScheduleOptions;
+  // Groups
+  protected groups: Map<number, Group>;
+  protected groupTypes: Map<number, GroupType>;
+  // Institutions
+  protected buildings: Map<number, Building>;
+  protected faculties: Map<number, Faculty>;
+  protected facultyDepartments: Map<number, FacultyDepartment>;
+  protected rooms: Map<number, Room>;
+  protected roomTypes: Map<number, RoomType>;
+  // Disciplines & lecturers
+  protected disciplineClassTypes: Map<number, DisciplineClassType>;
+  protected disciplineClasses: Map<number, DisciplineClass>;
+  protected lecturers: Map<number, Lecturer>;
+
+  constructor(params: SchedulerParams) {
+    this.validateParamsOrThrow(params);
+
+    this.options = params.options;
+    this.groups = this.convertEntityArrayToMap(params.groups);
+    this.groupTypes = this.convertEntityArrayToMap(params.groupTypes);
+    this.buildings = this.convertEntityArrayToMap(params.buildings);
+    this.faculties = this.convertEntityArrayToMap(params.faculties);
+    this.facultyDepartments = this.convertEntityArrayToMap(params.facultyDepartments);
+    this.rooms = this.convertEntityArrayToMap(params.rooms);
+    this.roomTypes = this.convertEntityArrayToMap(params.roomTypes);
+    this.disciplineClassTypes = this.convertEntityArrayToMap(params.disciplineClassTypes);
+    this.disciplineClasses = this.convertEntityArrayToMap(params.disciplineClasses);
+    this.lecturers = this.convertEntityArrayToMap(params.lecturers);
+  }
+
+  abstract generateSchedule(): Schedule;
+
+  private validateParamsOrThrow(params: SchedulerParams): void {
+    [
+      params.groups,
+      params.buildings,
+      params.faculties,
+      params.facultyDepartments,
+      params.rooms,
+      params.roomTypes,
+      params.disciplineClassTypes,
+      params.disciplineClasses,
+      params.lecturers,
+    ].forEach((items: Array<{ id: number }>) => items.forEach((item) => {
+      if (items.filter(({ id }) => item.id === id).length > 1) {
+        throw new Error(ID_DUPLICATE_ERROR);
+      }
+    }));
+  }
+
+  private convertEntityArrayToMap<T extends { id: number; }>(items: Array<T>): Map<number, T> {
+    return new Map(
+      items.map(item => [item.id, item]),
+    );
   }
 }
