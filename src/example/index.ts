@@ -24,11 +24,11 @@ const scheduler = new GeneticAlgorithmScheduler({
   disciplineClasses,
   lecturers,
 }, {
-  populationSize: 100,
+  populationSize: 50,
   eliteIndividualsCount: 20,
   crossoverIndividualsFraction: 0.8,
   geneMutationProbability: 0.2,
-  maxIterations: 100_000,
+  maxIterations: 10_000,
 });
 
 const schedule: Schedule = scheduler.generateSchedule();
