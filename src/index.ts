@@ -53,8 +53,6 @@ export class Schedule {
   }
 }
 
-const ID_DUPLICATE_ERROR = 'ID duplicate error';
-
 export abstract class Scheduler {
   // Meta
   protected options: ScheduleOptions;
@@ -103,7 +101,7 @@ export abstract class Scheduler {
       params.lecturers,
     ].forEach((items: Array<{ id: number }>) => items.forEach((item) => {
       if (items.filter(({ id }) => item.id === id).length > 1) {
-        throw new Error(ID_DUPLICATE_ERROR);
+        throw new Error(`ID duplicate found: ${item.id}`);
       }
     }));
   }
