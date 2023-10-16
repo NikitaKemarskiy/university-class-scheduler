@@ -9,4 +9,5 @@ export const scheduleOptions: ScheduleOptions = {
     DayOfWeek.THURSDAY,
     DayOfWeek.FRIDAY,
   ],
+  lastClassNumber: 7,
 };

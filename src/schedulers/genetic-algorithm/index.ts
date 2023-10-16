@@ -415,16 +415,10 @@ export class GeneticAlgorithmScheduler extends Scheduler {
     disciplineClassesAssigned: DisciplineClassAssigned[],
     individual: Individual
   ): number {
-    const groupIds: number[] = Array.from(this.groups.keys());
-    const lecturerIds: number[] = Array.from(this.lecturers.keys());
+    const groups: Group[] = Array.from(this.groups.values());
+    const lecturers: Lecturer[] = Array.from(this.lecturers.values());
 
-    const averagenessOfClassesNonFulfillmentDegree = groupIds.reduce((accum: number, groupId: number) => {
-      const group: Group | undefined = this.groups.get(groupId);
-      
-      if (!group) {
-        throw new Error(`Group with ID ${groupId} not found`);
-      }
-
+    const averagenessOfClassesNonFulfillmentDegree = groups.reduce((accum: number, group: Group) => {
       const groupType: GroupType | undefined = this.groupTypes.get(group.typeId);
 
       if (!groupType) {
@@ -432,7 +426,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       }
 
       const groupClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-        ({ groupIds }, index) => groupIds.includes(groupId)
+        ({ groupIds }, index) => groupIds.includes(group.id)
           ? individual.classes[index]
           : []
       );
@@ -461,10 +455,10 @@ export class GeneticAlgorithmScheduler extends Scheduler {
         
         return accum + Math.abs(averageClassesPerDay - actualClassesByDay) / averageClassesPerDay;
       }, 0) / (groupClassesByDays.length || 1);
-    }, 0) / (groupIds.length || 1);
-    const groupWindowsAbsenceNonFulfillmentDegree = groupIds.reduce((accum: number, groupId: number) => {
+    }, 0) / (groups.length || 1);
+    const groupWindowsAbsenceNonFulfillmentDegree = groups.reduce((accum: number, group: Group) => {
       const groupClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-        ({ groupIds }, index) => groupIds.includes(groupId)
+        (disciplineClassAssigned, index) => disciplineClassAssigned.groupIds.includes(group.id)
           ? individual.classes[index]
           : []
       );
@@ -472,10 +466,10 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       const groupClassesByDays: Array<Array<Class>> = this.getClassesByDays(groupClasses);
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(groupClassesByDays);
-    }, 0) / (groupIds.length || 1);
-    const lecturerWindowsAbsenceNonFulfillmentDegree = lecturerIds.reduce((accum: number, lecturerId: number) => {
+    }, 0) / (groups.length || 1);
+    const lecturerWindowsAbsenceNonFulfillmentDegree = lecturers.reduce((accum: number, lecturer: Lecturer) => {
       const lecturerClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-        ({ lecturerIds }, index) => lecturerIds.includes(lecturerId)
+        (disciplineClassAssigned, index) => disciplineClassAssigned.lecturerIds.includes(lecturer.id)
           ? individual.classes[index]
           : []
       );
@@ -483,22 +477,29 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       const lecturerClassesByDays: Array<Array<Class>> = this.getClassesByDays(lecturerClasses);
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(lecturerClassesByDays);
-    }, 0) / (lecturerIds.length || 1);
-    // TODO
-    // const groupTransitionBetweenBuildingsAbsenceNonFulfillmentDegree = groupIds.reduce((accum: number, groupId: number) => {
-    //   const groupClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-    //     ({ groupIds }, index) => groupIds.includes(groupId)
-    //       ? individual.classes[index]
-    //       : []
-    //   );
+    }, 0) / (lecturers.length || 1);
 
-    //   const groupClassesByDays: Array<Array<Class>> = this.getClassesByDays(groupClasses);
-    // });
+    const lectionsClasses: Array<Class> = disciplineClassesAssigned.flatMap(
+      ({ disciplineId }, index) => {
+        const disciplineClass = this.disciplineClasses.get(disciplineId);
+
+        return disciplineClass?.typeId === 1
+          ? individual.classes[index]
+          : []
+      }
+    );
+    const lectionsAtBeginningOfDayNonFulfillmentDegree = lectionsClasses.reduce(
+      (accum: number, cls: Class) => accum + cls.classNumber / this.options.lastClassNumber,
+      0
+    ) / (lectionsClasses.length || 1);
+    
+    // TODO: Додати кількість переходів між корпусами для груп та викладачів
 
     return [
       averagenessOfClassesNonFulfillmentDegree * 0.5,
       groupWindowsAbsenceNonFulfillmentDegree * 1,
       lecturerWindowsAbsenceNonFulfillmentDegree * 0.75,
+      lectionsAtBeginningOfDayNonFulfillmentDegree * 0.5,
     ].reduce((accum, item) => accum + item);
   }
   

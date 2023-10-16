@@ -3,6 +3,7 @@ import { DayOfWeek } from "./meta";
 export type ScheduleOptions = {
   weeksPerCycle: number; // Кількість тижнів у циклі розкладу
   workingDays: Array<DayOfWeek>; // Робочі дні у тижні, наприклад, Понеділок-Пʼятниця
+  lastClassNumber: number; // Номер останньої пари
 }
 
 export type Class = {
