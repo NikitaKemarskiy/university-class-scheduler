@@ -11,7 +11,7 @@ import { getUniqueClasses } from "../../helpers";
 
 // disciplineClassesAssigned dataset is used to implement the second subtask solution first, because it's more important
 // and it has ready-to-use genetic algorithm tips.
-// TODO: Implement another method to calculate disciplineClassAssigned: Z[] array
+// TODO: Implement another method to calculate disciplineClassAssigned: DisciplineClassAssigned[] array
 // (i.e. to solve the first subtask).
 import { disciplineClassesAssignedPartial } from './test-data/disciplineClassAssignedPartial';
 import { Individual } from "./individual";
@@ -124,8 +124,8 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       let individual: Individual | null = null;
 
       do {
-        // Generally that should not happen because algorithm guarantees that all individuals are
-        // appropriate, so this check is added rather for debugging.
+        // It's unlikely that this condition is true
+        // (according to random individual generation logic)
         if (individual) {
           console.log(`Individual ${index} in initial population is not appropriate. Generating one more time`);
         }
@@ -157,32 +157,19 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       - crossoverIndividualsCount;
 
     const crossoverIndividuals: Array<Individual> = [...Array(crossoverIndividualsCount).keys()].map(() => {
-      const eliteIndividualsToChooseParents: Array<Individual> = [...eliteIndividuals];
-
-      const [parent1] = eliteIndividualsToChooseParents.splice(Math.floor(Math.random() * eliteIndividualsToChooseParents.length), 1);
-      const [parent2] = eliteIndividualsToChooseParents.splice(Math.floor(Math.random() * eliteIndividualsToChooseParents.length), 1);
-
       let individual: Individual | null = null;
 
       do {
+        // This condition should not be true because algorithm guarantees that all individuals are
+        // appropriate, so this check is added rather for debugging.
         if (individual) {
           console.log('Crossover individual is not appropriate. Generating one more time');
         }
 
-        const parentGeneIndices: number[] = [...Array(disciplineClassesAssigned.length)].map(
-          () => Math.floor(Math.random() * 2),
-        );
+        const mainParent = eliteIndividuals[Math.floor(Math.random() * eliteIndividuals.length)];
+        const secondaryParent = eliteIndividuals[Math.floor(Math.random() * eliteIndividuals.length)];
 
-        individual = new Individual({
-          disciplineClassesAssigned,
-          roomIds: disciplineClassesAssigned.map(
-            (_, index) => [parent1, parent2][parentGeneIndices[index]].roomIds[index],
-          ),
-          classes: disciplineClassesAssigned.map(
-            (_, index) => [parent1, parent2][parentGeneIndices[index]].classes[index],
-          ),
-          schedulerParams: this.params,
-        });
+        individual = mainParent.getCrossoverIndividual(secondaryParent);
       } while (!individual.isAppropriate());
 
       return individual;
@@ -193,7 +180,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       let individual: Individual | null = null;
 
       do {
-        // Generally that should not happen because algorithm guarantees that all individuals are
+        // This condition should not be true because algorithm guarantees that all individuals are
         // appropriate, so this check is added rather for debugging.
         if (individual) {
           console.log('Mutation individual is not appropriate. Generating one more time');

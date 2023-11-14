@@ -180,6 +180,46 @@ export class Individual {
       .some((checkResult: boolean) => checkResult);
   }
 
+  getCrossoverIndividual(secondaryParent: Individual): Individual {
+    // Create a copy of a main parent (this) individual
+    const crossoverIndividual = new Individual({
+      disciplineClassesAssigned: this.disciplineClassesAssigned,
+      roomIds: [...this.roomIds],
+      classes: [...this.classes],
+      schedulerParams: this.schedulerParams,
+    });
+
+    for (let i = 0; i < crossoverIndividual.disciplineClassesAssigned.length; i++) {
+      // Try to perform crossover
+      if (Math.floor(Math.random() * 2) === 1) {
+        const availability = getAvailabilityIntersection([
+          crossoverIndividual.getRoomAvailability(this.schedulerParams.rooms.get(secondaryParent.roomIds[i])!),
+          crossoverIndividual.getDisciplineClassAssignedAvailability(crossoverIndividual.disciplineClassesAssigned[i]),
+        ]);
+
+        // Enough mutual availability between the room and discipline class assigned
+        if (availability.length >= crossoverIndividual.disciplineClassesAssigned[i].classesPerCycle) {
+          const classes = [
+            ...Array(crossoverIndividual.disciplineClassesAssigned[i].classesPerCycle).keys()
+          ].map(() => {
+            // Remove random Class from the array and return it
+            const [randomClass] = availability.splice(Math.floor(Math.random() * availability.length), 1);
+    
+            return randomClass;
+          });
+
+          // Perform mutation & break from the loop
+          crossoverIndividual.roomIds[i] = secondaryParent.roomIds[i];
+          crossoverIndividual.classes[i] = classes;
+
+          break;
+        }
+      }
+    }
+
+    return crossoverIndividual;
+  }
+
   static getRandomIndividual(
     disciplineClassesAssigned: Array<DisciplineClassAssigned>,
     schedulerParams: GeneticAlgorithmSchedulerParams,
@@ -247,7 +287,7 @@ export class Individual {
     });
 
     for (let i = 0; i < mutatedIndividual.disciplineClassesAssigned.length; i++) {
-      // Perform mutation
+      // Try to perform mutation
       if (Math.random() < geneMutationProbability) {
         const appropriateRooms = this.getAppropriateRooms(
           mutatedIndividual.disciplineClassesAssigned[i],
@@ -268,7 +308,7 @@ export class Individual {
             ),
           ]);
 
-          // No enough mutual availability between the room and discipline class assigned
+          // Enough mutual availability between the room and discipline class assigned
           if (availability.length >= mutatedIndividual.disciplineClassesAssigned[i].classesPerCycle) {
             const classes = [
               ...Array(mutatedIndividual.disciplineClassesAssigned[i].classesPerCycle).keys()
