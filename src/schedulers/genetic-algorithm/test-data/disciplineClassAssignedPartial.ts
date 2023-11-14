@@ -1,5 +1,3 @@
-import { DisciplineClassAssigned } from "../types";
-
 export const disciplineClassesAssignedPartial: Array<{
   disciplineId: number;
   lecturerIds: Array<number>;

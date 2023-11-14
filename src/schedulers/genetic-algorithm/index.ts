@@ -1,82 +1,95 @@
-import { Class, DayOfWeek, DisciplineClass, Group, GroupType, Lecturer, Room, Schedule, Scheduler, SchedulerParams, WeeklyAvailableClasses } from "../..";
-import { ImpossibleToGenerateScheduleError } from "../../errors";
+import {
+  Class,
+  DisciplineClass,
+  Group,
+  Lecturer,
+  Schedule,
+  Scheduler,
+  SchedulerParams,
+} from "../..";
 import { getUniqueClasses } from "../../helpers";
 
 // disciplineClassesAssigned dataset is used to implement the second subtask solution first, because it's more important
 // and it has ready-to-use genetic algorithm tips.
 // TODO: Implement another method to calculate disciplineClassAssigned: Z[] array
 // (i.e. to solve the first subtask).
-import { disciplineClassesAssignedPartial } from './test-data/disciplineClassAssigned';
-import { DisciplineClassAssigned, GeneticAlgorithmParams, Individual } from "./types";
+import { disciplineClassesAssignedPartial } from './test-data/disciplineClassAssignedPartial';
+import { Individual } from "./individual";
+import { DisciplineClassAssigned, GeneticAlgorithmParams, GeneticAlgorithmSchedulerParams } from "./types";
+import {
+  convertEntityArrayToMap,
+  convertWeeklyAvailableClassesToAvailability,
+  getAvailabilityIntersection,
+  getClassesByDays,
+} from "./helpers";
 
 export class GeneticAlgorithmScheduler extends Scheduler {
+  private readonly params: GeneticAlgorithmSchedulerParams;
+
   constructor(
     params: SchedulerParams,
     private readonly geneticAlgorithmParams: GeneticAlgorithmParams
   ) {
     super(params);
 
+    this.params = {
+      options: params.options,
+      groups: convertEntityArrayToMap(params.groups),
+      groupTypes: convertEntityArrayToMap(
+        params.groupTypes.map((groupType) => ({
+          ...groupType,
+          availability: convertWeeklyAvailableClassesToAvailability(
+            groupType.weeklyAvailableClasses,
+            params.options.weeksPerCycle,
+          ),
+        }))
+      ),
+      buildings: convertEntityArrayToMap(params.buildings),
+      faculties: convertEntityArrayToMap(params.faculties),
+      facultyDepartments: convertEntityArrayToMap(params.facultyDepartments),
+      rooms: convertEntityArrayToMap(
+        params.rooms.map((room) => ({
+          ...room,
+          availability: convertWeeklyAvailableClassesToAvailability(
+            room.weeklyAvailableClasses,
+            params.options.weeksPerCycle,
+          ),
+        }))
+      ),
+      roomTypes: convertEntityArrayToMap(params.roomTypes),
+      disciplineClassTypes: convertEntityArrayToMap(params.disciplineClassTypes),
+      disciplineClasses: convertEntityArrayToMap(params.disciplineClasses),
+      lecturers: convertEntityArrayToMap(
+        params.lecturers.map((lecturer) => ({
+          ...lecturer,
+          availability: convertWeeklyAvailableClassesToAvailability(
+            lecturer.weeklyAvailableClasses,
+            params.options.weeksPerCycle,
+          ),
+        }))
+      ),
+    }
     this.validateGeneticAlgorithmParamsOrThrow();
   }
 
   generateSchedule(): Schedule {
-    const disciplineClassesAssigned: DisciplineClassAssigned[] = disciplineClassesAssignedPartial
+    const disciplineClassesAssigned: Array<DisciplineClassAssigned> = disciplineClassesAssignedPartial
       .map((disciplineClassAssigned) => {
-        const discipline: DisciplineClass | undefined = this.disciplineClasses.get(disciplineClassAssigned.disciplineId);
-        
-        if (!discipline) {
-          throw new Error(`Discipline with ID ${disciplineClassAssigned.disciplineId} not found`);
-        }
-
-        const lecturers: Lecturer[] = disciplineClassAssigned.lecturerIds.map((lecturerId) => {
-          const lecturer = this.lecturers.get(lecturerId);
-
-          if (!lecturer) {
-            throw new Error(`Lecturer with ID ${disciplineClassAssigned.disciplineId} not found`);
-          }
-
-          return lecturer;
-        });
-        
-        const groups: Group[] = disciplineClassAssigned.groupIds.map((groupId) => {
-          const group = this.groups.get(groupId);
-
-          if (!group) {
-            throw new Error(`Group with ID ${disciplineClassAssigned.disciplineId} not found`);
-          }
-
-          return group;
-        });
+        const discipline: DisciplineClass = this.params.disciplineClasses.get(disciplineClassAssigned.disciplineId)!;
         
         return {
           disciplineId: disciplineClassAssigned.disciplineId,
           lecturerIds: disciplineClassAssigned.lecturerIds,
           groupIds: disciplineClassAssigned.groupIds,
-          classesPerCycle: discipline.classesPerWeek * this.options.weeksPerCycle,
+          classesPerCycle: discipline.classesPerWeek * this.params.options.weeksPerCycle,
           online: discipline.online,
           appropriateRoomTypeIds: discipline.appropriateRoomTypeIds,
-          availability: this.getAvailabilityIntersection(
-            [
-              ...lecturers,
-              ...groups.map((group) => {
-                const groupType = this.groupTypes.get(group.typeId);
-
-                if (!groupType) {
-                  throw new Error(`Group type with ID ${group.typeId} not found`);
-                }
-
-                return groupType;
-              })
-            ].map(({ weeklyAvailableClasses }) =>
-              this.convertWeeklyAvailableClassesToAvailability(weeklyAvailableClasses)
-            ),
-          ),
           facultyId: discipline.facultyId,
           facultyDepartmentId: discipline.facultyDepartmentId,
         };
       });
 
-    let population: Individual[] | undefined;
+    let population: Array<Individual> | undefined;
     
     for (let i = 0; i < this.geneticAlgorithmParams.maxIterations; i++) {
       if (population) {
@@ -106,238 +119,29 @@ export class GeneticAlgorithmScheduler extends Scheduler {
     return new Schedule([]);
   }
 
-  private getAvailabilityIntersection(availabilities: Array<Array<Class>>): Array<Class> {
-    if (availabilities.length === 0) {
-      return [];
-    }
-  
-    const intersection = availabilities.reduce((acc, availability) => {
-      const availabilitySet = new Set(
-        availability.map((cls) => `${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`)
-      );
-  
-      return acc.filter((cls) =>
-        availabilitySet.has(`${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`)
-      );
-    }, availabilities[0]);
-  
-    return intersection;
-  }
-
-  private convertWeeklyAvailableClassesToAvailability(
-    weeklyAvailableClasses: WeeklyAvailableClasses
-  ): Array<Class> {
-    return Object.entries(weeklyAvailableClasses).flatMap((entry: [string, Array<number>]) => {
-      const [workingDay, availableClassNumbers] = entry;
-
-      return availableClassNumbers.flatMap((availableClassNumber: number) =>
-        [...Array(this.options.weeksPerCycle).keys()].flatMap(
-          (weekNumber: number) => ({
-            classNumber: availableClassNumber,
-            workingDay: workingDay as DayOfWeek,
-            weekNumber,
-          })
-        )
-      );
-    });
-  }
-
-  // Checks if individual meets all the requirements
-  private isIndividualAppropriate(
-    disciplineClassesAssigned: DisciplineClassAssigned[],
-    individual: Individual
-  ): boolean {
-    return ![
-      // Перевірка "накладок" та дотримання ліміту занять на день у груп
-      Array.from(this.groups.keys()).some((groupId: number) => {
-        const group: Group | undefined = this.groups.get(groupId);
-        
-        if (!group) {
-          throw new Error(`Group with ID ${groupId} not found`);
-        }
-
-        const groupType: GroupType | undefined = this.groupTypes.get(group.typeId);
-
-        if (!groupType) {
-          throw new Error(`Group type with ID ${group.typeId} not found`);
-        }
-
-        const groupClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-          ({ groupIds }, index) => groupIds.includes(groupId)
-            ? individual.classes[index]
-            : []
-        );
-
-        // Присутня "накладка" у групи
-        if (getUniqueClasses(groupClasses).length !== groupClasses.length) {
-          return true;
-        }
-
-        const groupClassesByDays: Array<Array<Class>> = Array.from(
-          groupClasses
-            .reduce((accum: Map<string, Array<Class>>, cls: Class) => {
-              const key = `${cls.workingDay}-${cls.weekNumber}`;
-              const existingClassesByDay = accum.get(key);
-
-              if (existingClassesByDay) {
-                accum.set(key, [...existingClassesByDay, cls]);
-              } else {
-                accum.set(key, [cls]);
-              }
-
-              return accum;
-            }, new Map())
-            .values()
-        );
-
-        // Кількість занять на день більша за ліміт
-        groupClassesByDays.forEach((groupClassesByDay) => {
-          if (groupClassesByDay.length > groupType.maxClassesPerDay) {
-            return true;
-          }
-        })
-      }),
-      // Перевірка "накладок" та доступності аудиторій
-      Array.from(this.rooms.keys()).some((roomId: number) => {
-        const roomClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-          (_, index) => individual.roomIds[index] === roomId
-            ? individual.classes[index]
-            : []
-        );
-
-        // Присутня "накладка" у аудиторії
-        if (getUniqueClasses(roomClasses).length !== roomClasses.length) {
-          return true;
-        }
-
-        const room: Room | undefined = this.rooms.get(roomId);
-
-        if (!room) {
-          throw new Error(`Room with ID ${roomId} not found`);
-        }
-
-        // Аудиторія недоступна в назначений час
-        if (
-          this.getAvailabilityIntersection([
-            this.convertWeeklyAvailableClassesToAvailability(room.weeklyAvailableClasses),
-            roomClasses,
-          ]).length !== roomClasses.length
-        ) {
-          return true;
-        }
-      }),
-      // Перевірка "накладок" у викладачів
-      Array.from(this.lecturers.keys()).some((lecturerId: number) => {
-        const lecturerClasses: Array<Class> = disciplineClassesAssigned.flatMap(
-          ({ lecturerIds }, index) => lecturerIds.includes(lecturerId)
-            ? individual.classes[index]
-            : []
-        );
-
-        // Присутня "накладка" у викладача
-        if (getUniqueClasses(lecturerClasses).length !== lecturerClasses.length) {
-          return true;
-        }
-      }),
-      // Перевірка обсягу проведених занять та вимог до аудиторій
-      disciplineClassesAssigned.some((disciplineClassAssigned, index) => {
-        if (individual.classes[index].length !== disciplineClassAssigned.classesPerCycle) {
-          return true;
-        }
-
-        const room: Room | undefined = this.rooms.get(individual.roomIds[index]);
-
-        if (!room) {
-          throw new Error(`Room with ID ${individual.roomIds[index]} not found`);
-        }
-
-        if (
-          // Аудиторія не підходить за типом
-          !disciplineClassAssigned.appropriateRoomTypeIds.includes(room.typeId)
-          // Аудиторія замала (не здатна вмістити необхідну кількість груп)
-          || room.capacityGroups < disciplineClassAssigned.groupIds.length
-          // Аудиторія привʼязана до іншого факультету, аніж дисципліна
-          || (
-            disciplineClassAssigned.facultyId
-            && room.facultyId !== disciplineClassAssigned.facultyId
-          )
-          // Аудиторія привʼязана до іншої кафедри, аніж дисципліна
-          || (
-            disciplineClassAssigned.facultyDepartmentId
-            && room.facultyDepartmentId !== disciplineClassAssigned.facultyDepartmentId
-          )
-        ) {
-          return true;
-        }
-      })
-    ]
-      .some((checkResult: boolean) => checkResult);
-  }
-
-  private generateInitialPopulation(disciplineClassesAssigned: DisciplineClassAssigned[]): Individual[] {
+  private generateInitialPopulation(disciplineClassesAssigned: Array<DisciplineClassAssigned>): Array<Individual> {
     return [...Array(this.geneticAlgorithmParams.populationSize).keys()].map((_, index) => {
       let individual: Individual | null = null;
 
       do {
+        // Generally that should not happen because algorithm guarantees that all individuals are
+        // appropriate, so this check is added rather for debugging.
         if (individual) {
           console.log(`Individual ${index} in initial population is not appropriate. Generating one more time`);
         }
 
-        individual = {
-          roomIds: disciplineClassesAssigned.map(
-            (disciplineClassAssigned) => this.getRandomAppropriateRoomId(disciplineClassAssigned),
-          ),
-          classes: disciplineClassesAssigned.map(
-            (disciplineClassAssigned) => this.getRandomClasses(disciplineClassAssigned),
-          ),
-        };
-      } while (!this.isIndividualAppropriate(disciplineClassesAssigned, individual));
+        individual = Individual.getRandomIndividual(disciplineClassesAssigned, this.params);
+      } while (!individual.isAppropriate());
 
       return individual;
     });
   }
 
-  private getRandomAppropriateRoomId(disciplineClassAssigned: DisciplineClassAssigned): number {
-    const appropriateRooms: Room[] = Array.from(this.rooms.values()).filter(
-      (room: Room) => disciplineClassAssigned.appropriateRoomTypeIds.includes(room.typeId),
-    );
-
-    if (!appropriateRooms.length) {
-      throw new ImpossibleToGenerateScheduleError(
-        `No appropriate room (types ${disciplineClassAssigned.appropriateRoomTypeIds.join(', ')} ` +
-        'are appropriate) found'
-      );
-    }
-    
-    const randomAppropriateRoom = appropriateRooms[Math.floor(Math.random() * appropriateRooms.length)];
-
-    return randomAppropriateRoom.id;
-  }
-
-  private getRandomClasses(disciplineClassAssigned: DisciplineClassAssigned): Array<Class> {
-    // Create a copy of Availability array not to affect an original array with mutations
-    // (we will remove used Classes from the array)
-    const availability = [...disciplineClassAssigned.availability];
-
-    return [...Array(disciplineClassAssigned.classesPerCycle).keys()].map(() => {
-      if (!availability.length) {
-        throw new ImpossibleToGenerateScheduleError(
-          `No available class found, discipline class assigned: ${JSON.stringify(disciplineClassAssigned)}`
-        );
-      }
-
-      // Remove random Class from the array and return it
-      const [randomClass] = availability.splice(Math.floor(Math.random() * availability.length), 1);
-
-      return randomClass;
-    });
-  }
-
   private getNextPopulation(
-    disciplineClassesAssigned: DisciplineClassAssigned[],
-    population: Individual[]
-  ): Individual[] {
-    const eliteIndividuals: Individual[] = [...population]
+    disciplineClassesAssigned: Array<DisciplineClassAssigned>,
+    population: Array<Individual>
+  ): Array<Individual> {
+    const eliteIndividuals: Array<Individual> = [...population]
       .sort((i1, i2) =>
         this.fitnessFunction(disciplineClassesAssigned, i1) -
         this.fitnessFunction(disciplineClassesAssigned, i2)
@@ -352,8 +156,8 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       - this.geneticAlgorithmParams.eliteIndividualsCount
       - crossoverIndividualsCount;
 
-    const crossoverIndividuals: Individual[] = [...Array(crossoverIndividualsCount).keys()].map(() => {
-      const eliteIndividualsToChooseParents: Individual[] = [...eliteIndividuals];
+    const crossoverIndividuals: Array<Individual> = [...Array(crossoverIndividualsCount).keys()].map(() => {
+      const eliteIndividualsToChooseParents: Array<Individual> = [...eliteIndividuals];
 
       const [parent1] = eliteIndividualsToChooseParents.splice(Math.floor(Math.random() * eliteIndividualsToChooseParents.length), 1);
       const [parent2] = eliteIndividualsToChooseParents.splice(Math.floor(Math.random() * eliteIndividualsToChooseParents.length), 1);
@@ -361,45 +165,42 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       let individual: Individual | null = null;
 
       do {
-        // if (individual) {
-        //   console.log('Crossover individual is not appropriate. Generating one more time');
-        // }
+        if (individual) {
+          console.log('Crossover individual is not appropriate. Generating one more time');
+        }
 
-        individual = {
+        const parentGeneIndices: number[] = [...Array(disciplineClassesAssigned.length)].map(
+          () => Math.floor(Math.random() * 2),
+        );
+
+        individual = new Individual({
+          disciplineClassesAssigned,
           roomIds: disciplineClassesAssigned.map(
-            (_, index) => [parent1, parent2][Math.floor(Math.random() * 2)].roomIds[index],
+            (_, index) => [parent1, parent2][parentGeneIndices[index]].roomIds[index],
           ),
           classes: disciplineClassesAssigned.map(
-            (_, index) => [parent1, parent2][Math.floor(Math.random() * 2)].classes[index],
+            (_, index) => [parent1, parent2][parentGeneIndices[index]].classes[index],
           ),
-        };
-      } while (!this.isIndividualAppropriate(disciplineClassesAssigned, individual));
+          schedulerParams: this.params,
+        });
+      } while (!individual.isAppropriate());
 
       return individual;
     });
-    const mutationIndividuals: Individual[] = [...Array(mutationIndividualsCount).keys()].map(() => {
+    const mutationIndividuals: Array<Individual> = [...Array(mutationIndividualsCount).keys()].map(() => {
       const [parent] = population.splice(Math.floor(Math.random() * population.length), 1);
 
       let individual: Individual | null = null;
 
       do {
-        // if (individual) {
-        //   console.log('Mutation individual is not appropriate. Generating one more time');
-        // }
+        // Generally that should not happen because algorithm guarantees that all individuals are
+        // appropriate, so this check is added rather for debugging.
+        if (individual) {
+          console.log('Mutation individual is not appropriate. Generating one more time');
+        }
 
-        individual = {
-          roomIds: parent.roomIds.map(
-            (parentRoomId, index) => Math.random() < this.geneticAlgorithmParams.geneMutationProbability
-              ? this.getRandomAppropriateRoomId(disciplineClassesAssigned[index])
-              : parentRoomId
-          ),
-          classes: parent.classes.map(
-            (parentClasses, index) =>  Math.random() < this.geneticAlgorithmParams.geneMutationProbability
-              ? this.getRandomClasses(disciplineClassesAssigned[index])
-              : parentClasses
-          ),
-        };
-      } while (!this.isIndividualAppropriate(disciplineClassesAssigned, individual));
+        individual = Individual.getMutatedIndividual(parent, this.geneticAlgorithmParams.geneMutationProbability);
+      } while (!individual.isAppropriate());
 
       return individual;
     });
@@ -412,18 +213,14 @@ export class GeneticAlgorithmScheduler extends Scheduler {
   }
 
   private fitnessFunction(
-    disciplineClassesAssigned: DisciplineClassAssigned[],
+    disciplineClassesAssigned: Array<DisciplineClassAssigned>,
     individual: Individual
   ): number {
-    const groups: Group[] = Array.from(this.groups.values());
-    const lecturers: Lecturer[] = Array.from(this.lecturers.values());
+    const groups = Array.from(this.params.groups.values());
+    const lecturers = Array.from(this.params.lecturers.values());
 
     const averagenessOfClassesNonFulfillmentDegree = groups.reduce((accum: number, group: Group) => {
-      const groupType: GroupType | undefined = this.groupTypes.get(group.typeId);
-
-      if (!groupType) {
-        throw new Error(`Group type with ID ${group.typeId} not found`);
-      }
+      const groupType = this.params.groupTypes.get(group.typeId)!;
 
       const groupClasses: Array<Class> = disciplineClassesAssigned.flatMap(
         ({ groupIds }, index) => groupIds.includes(group.id)
@@ -463,7 +260,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
           : []
       );
 
-      const groupClassesByDays: Array<Array<Class>> = this.getClassesByDays(groupClasses);
+      const groupClassesByDays: Array<Array<Class>> = getClassesByDays(groupClasses);
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(groupClassesByDays);
     }, 0) / (groups.length || 1);
@@ -474,14 +271,14 @@ export class GeneticAlgorithmScheduler extends Scheduler {
           : []
       );
 
-      const lecturerClassesByDays: Array<Array<Class>> = this.getClassesByDays(lecturerClasses);
+      const lecturerClassesByDays: Array<Array<Class>> = getClassesByDays(lecturerClasses);
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(lecturerClassesByDays);
     }, 0) / (lecturers.length || 1);
 
     const lectionsClasses: Array<Class> = disciplineClassesAssigned.flatMap(
       ({ disciplineId }, index) => {
-        const disciplineClass = this.disciplineClasses.get(disciplineId);
+        const disciplineClass = this.params.disciplineClasses.get(disciplineId);
 
         return disciplineClass?.typeId === 1
           ? individual.classes[index]
@@ -489,7 +286,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
       }
     );
     const lectionsAtBeginningOfDayNonFulfillmentDegree = lectionsClasses.reduce(
-      (accum: number, cls: Class) => accum + cls.classNumber / this.options.lastClassNumber,
+      (accum: number, cls: Class) => accum + cls.classNumber / this.params.options.lastClassNumber,
       0
     ) / (lectionsClasses.length || 1);
     
@@ -527,27 +324,8 @@ export class GeneticAlgorithmScheduler extends Scheduler {
         }
       }
 
-      return accum + (maxPossibleWindowsPerDay - windowsPerDay) / maxPossibleWindowsPerDay;
+      return accum + windowsPerDay / maxPossibleWindowsPerDay;
     }, 0) / (classesByDays.length || 1);
-  }
-
-  private getClassesByDays(classes: Array<Class>): Array<Array<Class>> {
-    return Array.from(
-      classes
-        .reduce((accum: Map<string, Array<Class>>, cls: Class) => {
-          const key = `${cls.workingDay}-${cls.weekNumber}`;
-          const existingClassesByDay = accum.get(key);
-
-          if (existingClassesByDay) {
-            accum.set(key, [...existingClassesByDay, cls]);
-          } else {
-            accum.set(key, [cls]);
-          }
-
-          return accum;
-        }, new Map())
-        .values()
-    );
   }
 
   private validateGeneticAlgorithmParamsOrThrow(): void {
