@@ -9,7 +9,7 @@ import {
   Lecturer,
   Room,
   RoomType,
-  ScheduleCell,
+  AssignedScheduleCell,
   ScheduleOptions
 } from "./types";
 
@@ -34,22 +34,34 @@ export type SchedulerParams = {
 };
 
 export class Schedule {
-  constructor(private readonly scheduleCells: Array<ScheduleCell>) {}
+  constructor(private readonly assignedScheduleCells: Array<AssignedScheduleCell>) {}
 
-  // TODO: Implement these filters in more general way (likely with abstraction - implementation)
-  getLecturerScheduleCells(lecturerId: number): Array<ScheduleCell> {
-    // TODO: Add implementation
-    return [];
-  }
+  getScheduleCells(filter: {
+    lecturerId?: number,
+    groupId?: number,
+    roomId?: number,
+  } = {}): Array<AssignedScheduleCell> {
+    let filteredAssignedScheduleCells = this.assignedScheduleCells;
 
-  getGroupScheduleCells(groupId: number): Array<ScheduleCell> {
-    // TODO: Add implementation
-    return [];
-  }
+    if (filter.lecturerId) {
+      filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        (assignedScheduleCell) => assignedScheduleCell.lecturerIds.includes(filter.lecturerId as number)
+      );
+    }
 
-  getRoomScheduleCells(roomId: number): Array<ScheduleCell> {
-    // TODO: Add implementation
-    return [];
+    if (filter.groupId) {
+      filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        (assignedScheduleCell) => assignedScheduleCell.groupIds.includes(filter.groupId as number)
+      );
+    }
+
+    if (filter.roomId) {
+      filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        (assignedScheduleCell) => assignedScheduleCell.roomId === filter.roomId as number
+      );
+    }
+
+    return filteredAssignedScheduleCells;
   }
 }
 

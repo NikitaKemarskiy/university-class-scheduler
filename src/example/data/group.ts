@@ -4,8 +4,8 @@ export const groupTypes: Array<GroupType> = [
   {
     id: 1,
     name: "Денна",
-    maxClassesPerDay: 5,
-    weeklyAvailableClasses: {
+    maxAssignedScheduleCellsPerDay: 5,
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5,6],
       TUESDAY: [1,2,3,4,5,6],
       WEDNESDAY: [1,2,3,4,5,6],
@@ -18,8 +18,8 @@ export const groupTypes: Array<GroupType> = [
   {
     id: 2,
     name: "Заочна",
-    maxClassesPerDay: 2,
-    weeklyAvailableClasses: {
+    maxAssignedScheduleCellsPerDay: 2,
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5,6],
       TUESDAY: [1,2,3,4,5,6],
       WEDNESDAY: [1,2,3,4,5,6],

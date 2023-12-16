@@ -1,64 +1,64 @@
 import { ImpossibleToGenerateScheduleError } from "../../errors";
-import { getUniqueClasses } from "../../helpers";
-import { Class } from "../../types";
+import { getUniqueScheduleCells } from "../../helpers";
+import { ScheduleCell, AssignedScheduleCell } from "../../types";
 import { getAvailabilityDifference, getAvailabilityIntersection } from "./helpers";
 import { Availability, DisciplineClassAssigned, GeneticAlgorithmSchedulerParams, _Room } from "./types";
 
 export class Individual {
   public disciplineClassesAssigned: Array<DisciplineClassAssigned>;
   public roomIds: Array<number>;
-  public classes: Array<Array<Class>>;
+  public scheduleCells: Array<Array<ScheduleCell>>;
   private schedulerParams: GeneticAlgorithmSchedulerParams;
 
   constructor(params: {
     disciplineClassesAssigned: Array<DisciplineClassAssigned>,
     roomIds: Array<number>,
-    classes: Array<Array<Class>>,
+    scheduleCells: Array<Array<ScheduleCell>>,
     schedulerParams: GeneticAlgorithmSchedulerParams,
   }) {
     this.disciplineClassesAssigned = params.disciplineClassesAssigned;
     this.roomIds = params.roomIds;
-    this.classes = params.classes;
+    this.scheduleCells = params.scheduleCells;
     this.schedulerParams = params.schedulerParams;
   }
 
   getRoomAvailability(room: _Room): Availability {
-    const roomBusyClasses = this.disciplineClassesAssigned.flatMap(
+    const roomScheduleCells = this.disciplineClassesAssigned.flatMap(
       (_, index) => this.roomIds[index] === room.id
-        ? this.classes[index]
+        ? this.scheduleCells[index]
         : []
     );
 
     return getAvailabilityDifference([
       room.availability,
-      roomBusyClasses,
+      roomScheduleCells,
     ]);
   }
 
   getDisciplineClassAssignedAvailability(disciplineClassAssigned: DisciplineClassAssigned): Availability {
     // Get lecturers availabilites intersection
     const lecturersAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.lecturerIds.map((lecturerId) => {
-      const lecturerBusyClasses = this.disciplineClassesAssigned.flatMap(
+      const lecturerScheduleCells = this.disciplineClassesAssigned.flatMap(
         (_, index) => this.disciplineClassesAssigned[index].lecturerIds.includes(lecturerId)
-          ? this.classes[index]
+          ? this.scheduleCells[index]
           : []
       );
       return getAvailabilityDifference([
         this.schedulerParams.lecturers.get(lecturerId)!.availability,
-        lecturerBusyClasses,
+        lecturerScheduleCells,
       ]);
     }));
   
     // Get groups availabilites intersection
     const groupsAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.groupIds.map(groupId => {
-      const groupClasses = this.disciplineClassesAssigned.flatMap(
+      const groupScheduleCells = this.disciplineClassesAssigned.flatMap(
         (_, index) => this.disciplineClassesAssigned[index].groupIds.includes(groupId)
-          ? this.classes[index]
+          ? this.scheduleCells[index]
           : []
       );
       return getAvailabilityDifference([
         this.schedulerParams.groupTypes.get(this.schedulerParams.groups.get(groupId)!.typeId)!.availability,
-        groupClasses,
+        groupScheduleCells,
       ]);
     }));
   
@@ -76,27 +76,27 @@ export class Individual {
         const group = this.schedulerParams.groups.get(groupId)!;
         const groupType = this.schedulerParams.groupTypes.get(group.typeId)!;
 
-        const groupClasses: Array<Class> = this.disciplineClassesAssigned.flatMap(
+        const groupScheduleCells: Array<ScheduleCell> = this.disciplineClassesAssigned.flatMap(
           ({ groupIds }, index) => groupIds.includes(groupId)
-            ? this.classes[index]
+            ? this.scheduleCells[index]
             : []
         );
 
         // Присутня "накладка" у групи
-        if (getUniqueClasses(groupClasses).length !== groupClasses.length) {
+        if (getUniqueScheduleCells(groupScheduleCells).length !== groupScheduleCells.length) {
           return true;
         }
 
-        const groupClassesByDays: Array<Array<Class>> = Array.from(
-          groupClasses
-            .reduce((accum: Map<string, Array<Class>>, cls: Class) => {
-              const key = `${cls.workingDay}-${cls.weekNumber}`;
-              const existingClassesByDay = accum.get(key);
+        const groupScheduleCellsByDays: Array<Array<ScheduleCell>> = Array.from(
+          groupScheduleCells
+            .reduce((accum: Map<string, Array<ScheduleCell>>, scheduleCell: ScheduleCell) => {
+              const key = `${scheduleCell.workingDay}-${scheduleCell.weekNumber}`;
+              const existingScheduleCellsByDay = accum.get(key);
 
-              if (existingClassesByDay) {
-                accum.set(key, [...existingClassesByDay, cls]);
+              if (existingScheduleCellsByDay) {
+                accum.set(key, [...existingScheduleCellsByDay, scheduleCell]);
               } else {
-                accum.set(key, [cls]);
+                accum.set(key, [scheduleCell]);
               }
 
               return accum;
@@ -105,22 +105,22 @@ export class Individual {
         );
 
         // Кількість занять на день більша за ліміт
-        groupClassesByDays.forEach((groupClassesByDay) => {
-          if (groupClassesByDay.length > groupType.maxClassesPerDay) {
+        groupScheduleCellsByDays.forEach((groupScheduleCellsByDay) => {
+          if (groupScheduleCellsByDay.length > groupType.maxAssignedScheduleCellsPerDay) {
             return true;
           }
         })
       }),
       // Перевірка "накладок" та доступності аудиторій
       Array.from(this.schedulerParams.rooms.keys()).some((roomId: number) => {
-        const roomClasses: Array<Class> = this.disciplineClassesAssigned.flatMap(
+        const roomScheduleCells: Array<ScheduleCell> = this.disciplineClassesAssigned.flatMap(
           (_, index) => this.roomIds[index] === roomId
-            ? this.classes[index]
+            ? this.scheduleCells[index]
             : []
         );
 
         // Присутня "накладка" у аудиторії
-        if (getUniqueClasses(roomClasses).length !== roomClasses.length) {
+        if (getUniqueScheduleCells(roomScheduleCells).length !== roomScheduleCells.length) {
           return true;
         }
 
@@ -130,28 +130,28 @@ export class Individual {
         if (
           getAvailabilityIntersection([
             room.availability,
-            roomClasses,
-          ]).length !== roomClasses.length
+            roomScheduleCells,
+          ]).length !== roomScheduleCells.length
         ) {
           return true;
         }
       }),
       // Перевірка "накладок" у викладачів
       Array.from(this.schedulerParams.lecturers.keys()).some((lecturerId: number) => {
-        const lecturerClasses: Array<Class> = this.disciplineClassesAssigned.flatMap(
+        const lecturerScheduleCells: Array<ScheduleCell> = this.disciplineClassesAssigned.flatMap(
           ({ lecturerIds }, index) => lecturerIds.includes(lecturerId)
-            ? this.classes[index]
+            ? this.scheduleCells[index]
             : []
         );
 
         // Присутня "накладка" у викладача
-        if (getUniqueClasses(lecturerClasses).length !== lecturerClasses.length) {
+        if (getUniqueScheduleCells(lecturerScheduleCells).length !== lecturerScheduleCells.length) {
           return true;
         }
       }),
       // Перевірка обсягу проведених занять та вимог до аудиторій
       this.disciplineClassesAssigned.some((disciplineClassAssigned, index) => {
-        if (this.classes[index].length !== disciplineClassAssigned.classesPerCycle) {
+        if (this.scheduleCells[index].length !== disciplineClassAssigned.assignedScheduleCellsPerCycle) {
           return true;
         }
 
@@ -185,7 +185,7 @@ export class Individual {
     const crossoverIndividual = new Individual({
       disciplineClassesAssigned: this.disciplineClassesAssigned,
       roomIds: [...this.roomIds],
-      classes: [...this.classes],
+      scheduleCells: [...this.scheduleCells],
       schedulerParams: this.schedulerParams,
     });
 
@@ -198,19 +198,19 @@ export class Individual {
         ]);
 
         // Enough mutual availability between the room and discipline class assigned
-        if (availability.length >= crossoverIndividual.disciplineClassesAssigned[i].classesPerCycle) {
-          const classes = [
-            ...Array(crossoverIndividual.disciplineClassesAssigned[i].classesPerCycle).keys()
+        if (availability.length >= crossoverIndividual.disciplineClassesAssigned[i].assignedScheduleCellsPerCycle) {
+          const scheduleCells = [
+            ...Array(crossoverIndividual.disciplineClassesAssigned[i].assignedScheduleCellsPerCycle).keys()
           ].map(() => {
             // Remove random Class from the array and return it
-            const [randomClass] = availability.splice(Math.floor(Math.random() * availability.length), 1);
+            const [randomScheduleCell] = availability.splice(Math.floor(Math.random() * availability.length), 1);
     
-            return randomClass;
+            return randomScheduleCell;
           });
 
           // Perform mutation & break from the loop
           crossoverIndividual.roomIds[i] = secondaryParent.roomIds[i];
-          crossoverIndividual.classes[i] = classes;
+          crossoverIndividual.scheduleCells[i] = scheduleCells;
 
           break;
         }
@@ -218,6 +218,23 @@ export class Individual {
     }
 
     return crossoverIndividual;
+  }
+
+  getAssignedScheduleCells(): Array<AssignedScheduleCell> {
+    const assignedScheduleCells: Array<AssignedScheduleCell> = [];
+
+    for (let i = 0; i < this.disciplineClassesAssigned.length; i++) {
+      assignedScheduleCells.push(...this.scheduleCells[i].map((scheduleCell: ScheduleCell) => ({
+        scheduleCell,
+        disciplineId: this.disciplineClassesAssigned[i].disciplineId,
+        online: this.disciplineClassesAssigned[i].online,
+        lecturerIds: this.disciplineClassesAssigned[i].lecturerIds,
+        groupIds: this.disciplineClassesAssigned[i].groupIds,
+        roomId: this.roomIds[i],
+      })))
+    }
+
+    return assignedScheduleCells;
   }
 
   static getRandomIndividual(
@@ -228,7 +245,7 @@ export class Individual {
     const randomIndividual = new Individual({
       disciplineClassesAssigned,
       roomIds: new Array(disciplineClassesAssigned.length).fill(null),
-      classes: new Array(disciplineClassesAssigned.length).fill([]),
+      scheduleCells: new Array(disciplineClassesAssigned.length).fill([]),
       schedulerParams,
     });
 
@@ -249,19 +266,19 @@ export class Individual {
         ]);
 
         // Not enough mutual availability between the room and discipline class assigned
-        if (availability.length >= disciplineClassAssigned.classesPerCycle) {
-          const classes = [
-            ...Array(disciplineClassAssigned.classesPerCycle).keys()
+        if (availability.length >= disciplineClassAssigned.assignedScheduleCellsPerCycle) {
+          const scheduleCells = [
+            ...Array(disciplineClassAssigned.assignedScheduleCellsPerCycle).keys()
           ].map(() => {
             // Remove random Class from the array and return it
-            const [randomClass] = availability.splice(Math.floor(Math.random() * availability.length), 1);
+            const [randomScheduleCell] = availability.splice(Math.floor(Math.random() * availability.length), 1);
     
-            return randomClass;
+            return randomScheduleCell;
           });
   
           // Save solution into random individual & break from the loop
           randomIndividual.roomIds[i] = randomAppropriateRoom.id;
-          randomIndividual.classes[i] = classes;
+          randomIndividual.scheduleCells[i] = scheduleCells;
 
           break;
         }
@@ -282,7 +299,7 @@ export class Individual {
     const mutatedIndividual = new Individual({
       disciplineClassesAssigned: parent.disciplineClassesAssigned,
       roomIds: [...parent.roomIds],
-      classes: [...parent.classes],
+      scheduleCells: [...parent.scheduleCells],
       schedulerParams: parent.schedulerParams,
     });
 
@@ -309,19 +326,19 @@ export class Individual {
           ]);
 
           // Enough mutual availability between the room and discipline class assigned
-          if (availability.length >= mutatedIndividual.disciplineClassesAssigned[i].classesPerCycle) {
-            const classes = [
-              ...Array(mutatedIndividual.disciplineClassesAssigned[i].classesPerCycle).keys()
+          if (availability.length >= mutatedIndividual.disciplineClassesAssigned[i].assignedScheduleCellsPerCycle) {
+            const scheduleCells = [
+              ...Array(mutatedIndividual.disciplineClassesAssigned[i].assignedScheduleCellsPerCycle).keys()
             ].map(() => {
-              // Remove random Class from the array and return it
-              const [randomClass] = availability.splice(Math.floor(Math.random() * availability.length), 1);
+              // Remove random ScheduleCell from the array and return it
+              const [randomScheduleCell] = availability.splice(Math.floor(Math.random() * availability.length), 1);
       
-              return randomClass;
+              return randomScheduleCell;
             });
   
             // Perform mutation & break from the loop
             mutatedIndividual.roomIds[i] = randomAppropriateRoom.id;
-            mutatedIndividual.classes[i] = classes;
+            mutatedIndividual.scheduleCells[i] = scheduleCells;
 
             break;
           }

@@ -1,6 +1,5 @@
 import {
   Building,
-  Class,
   DisciplineClass,
   DisciplineClassType,
   Faculty,
@@ -10,10 +9,11 @@ import {
   Lecturer,
   Room,
   RoomType,
+  ScheduleCell,
   ScheduleOptions,
 } from "../../..";
 
-export type Availability = Array<Class>;
+export type Availability = Array<ScheduleCell>;
 
 export type _GroupType = GroupType & {
   availability: Availability;
@@ -50,7 +50,7 @@ export type DisciplineClassAssigned = {
   disciplineId: number;
   lecturerIds: Array<number>;
   groupIds: Array<number>;
-  classesPerCycle: number;
+  assignedScheduleCellsPerCycle: number;
   online: boolean;
   appropriateRoomTypeIds: Array<number>;
   facultyId?: number;

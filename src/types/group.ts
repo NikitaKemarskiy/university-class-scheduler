@@ -1,4 +1,4 @@
-import { WeeklyAvailableClasses } from "./meta";
+import { WeeklyAvailableScheduleCells } from "./meta";
 
 export enum AcademicDegree {
   BACHELOR = "BACHELOR",
@@ -9,9 +9,9 @@ export enum AcademicDegree {
 export type GroupType = {
   id: number;
   name: string; // "Денна", "Заочна", "Вечірня"
-  maxClassesPerDay: number; // Макс. кількість занять на день у конкретної групи
+  maxAssignedScheduleCellsPerDay: number; // Макс. кількість занять на день у конкретної групи
   // Графік доступності групи протягом тижня (пари, на яких групі можна ставити заняття)
-  weeklyAvailableClasses: WeeklyAvailableClasses;
+  weeklyAvailableScheduleCells: WeeklyAvailableScheduleCells;
 }
 
 // Група. Приклад: "ІП-22мп"

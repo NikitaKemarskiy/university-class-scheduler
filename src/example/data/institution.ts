@@ -5,7 +5,12 @@ export const buildings: Array<Building> = [
     id: 1,
     address: "Корпус № 18, Київ, вул. Політехнічна, 41",
     distant: false
-  }
+  },
+  {
+    id: 2,
+    address: "Корпус № 7, Київ, проспект Берестейський, 37-к",
+    distant: false
+  },
 ];
 
 export const faculties: Array<Faculty> = [
@@ -58,7 +63,7 @@ export const rooms: Array<Room> = [
     buildingId: 1,
     facultyId: 1,
     capacityGroups: 5,
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       [DayOfWeek.MONDAY]: [1,2,3,4,5],
       [DayOfWeek.TUESDAY]: [1,2,3],
       [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
@@ -75,7 +80,7 @@ export const rooms: Array<Room> = [
     buildingId: 1,
     facultyId: 1,
     capacityGroups: 2,
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       [DayOfWeek.MONDAY]: [1,2,3,4,5],
       [DayOfWeek.TUESDAY]: [1,2,3],
       [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
@@ -89,10 +94,10 @@ export const rooms: Array<Room> = [
     id: 3,
     name: '321',
     typeId: 3,
-    buildingId: 1,
+    buildingId: 2,
     facultyId: 1,
     capacityGroups: 1,
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       [DayOfWeek.MONDAY]: [1,2,3,4,5],
       [DayOfWeek.TUESDAY]: [1,2,3],
       [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
@@ -106,10 +111,10 @@ export const rooms: Array<Room> = [
     id: 4,
     name: '322',
     typeId: 3,
-    buildingId: 1,
+    buildingId: 2,
     facultyId: 1,
     capacityGroups: 2,
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       [DayOfWeek.MONDAY]: [1,2,3,4,5],
       [DayOfWeek.TUESDAY]: [1,2,3],
       [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
@@ -126,7 +131,7 @@ export const rooms: Array<Room> = [
     buildingId: 1,
     facultyId: 1,
     capacityGroups: 1,
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       [DayOfWeek.MONDAY]: [1,2,3,4,5],
       [DayOfWeek.TUESDAY]: [1,2,3],
       [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],

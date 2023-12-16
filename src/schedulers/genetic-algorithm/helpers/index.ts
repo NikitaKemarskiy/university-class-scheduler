@@ -1,4 +1,4 @@
-import { Class, DayOfWeek, WeeklyAvailableClasses } from "../../../types";
+import { ScheduleCell, DayOfWeek, WeeklyAvailableScheduleCells, AssignedScheduleCell } from "../../../types";
 import { Availability } from "../types";
 
 export function convertEntityArrayToMap<T extends { id: number; }>(items: Array<T>): Map<number, T> {
@@ -7,11 +7,11 @@ export function convertEntityArrayToMap<T extends { id: number; }>(items: Array<
   );
 }
 
-export function convertWeeklyAvailableClassesToAvailability(
-  weeklyAvailableClasses: WeeklyAvailableClasses,
+export function convertWeeklyAvailableScheduleCellsToAvailability(
+  weeklyAvailableScheduleCells: WeeklyAvailableScheduleCells,
   weeksPerCycle: number,
 ): Availability {
-  return Object.entries(weeklyAvailableClasses).flatMap((entry: [string, Array<number>]) => {
+  return Object.entries(weeklyAvailableScheduleCells).flatMap((entry: [string, Array<number>]) => {
     const [workingDay, availableClassNumbers] = entry;
 
     return availableClassNumbers.flatMap((availableClassNumber: number) =>
@@ -26,17 +26,17 @@ export function convertWeeklyAvailableClassesToAvailability(
   });
 }
 
-export function getClassesByDays(classes: Array<Class>): Array<Array<Class>> {
+export function getAssignedScheduleCellsByDays(assignedScheduleCells: Array<AssignedScheduleCell>): Array<Array<AssignedScheduleCell>> {
   return Array.from(
-    classes
-      .reduce((accum: Map<string, Array<Class>>, cls: Class) => {
-        const key = `${cls.workingDay}-${cls.weekNumber}`;
-        const existingClassesByDay = accum.get(key);
+    assignedScheduleCells
+      .reduce((accum: Map<string, Array<AssignedScheduleCell>>, assignedScheduleCells: AssignedScheduleCell) => {
+        const key = `${assignedScheduleCells.scheduleCell.workingDay}-${assignedScheduleCells.scheduleCell.weekNumber}`;
+        const existingAssignedScheduleCellsByDay = accum.get(key);
 
-        if (existingClassesByDay) {
-          accum.set(key, [...existingClassesByDay, cls]);
+        if (existingAssignedScheduleCellsByDay) {
+          accum.set(key, [...existingAssignedScheduleCellsByDay, assignedScheduleCells]);
         } else {
-          accum.set(key, [cls]);
+          accum.set(key, [assignedScheduleCells]);
         }
 
         return accum;
@@ -52,11 +52,11 @@ export function getAvailabilityIntersection(availabilities: Array<Availability>)
 
   const intersection = availabilities.reduce((acc, availability) => {
     const availabilitySet = new Set(
-      availability.map((cls) => `${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`)
+      availability.map((scheduleCell) => `${scheduleCell.workingDay}-${scheduleCell.classNumber}-${scheduleCell.weekNumber}`)
     );
 
-    return acc.filter((cls) =>
-      availabilitySet.has(`${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`)
+    return acc.filter((scheduleCell) =>
+      availabilitySet.has(`${scheduleCell.workingDay}-${scheduleCell.classNumber}-${scheduleCell.weekNumber}`)
     );
   });
 
@@ -65,8 +65,8 @@ export function getAvailabilityIntersection(availabilities: Array<Availability>)
 
 export function getAvailabilityDifference(availabilities: Array<Availability>): Availability {
   const availabilityOccurences = availabilities.reduce((acc, availability) => {
-    availability.forEach((cls) => {
-      const key = `${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`;
+    availability.forEach((scheduleCell) => {
+      const key = `${scheduleCell.workingDay}-${scheduleCell.classNumber}-${scheduleCell.weekNumber}`;
       const occurences = acc.get(key) || 0;
 
       acc.set(key, occurences + 1);
@@ -76,6 +76,6 @@ export function getAvailabilityDifference(availabilities: Array<Availability>): 
   }, new Map<string, number>());
 
   return availabilities.flat().filter(
-    (cls) => availabilityOccurences.get(`${cls.workingDay}-${cls.classNumber}-${cls.weekNumber}`) === 1
+    (scheduleCell) => availabilityOccurences.get(`${scheduleCell.workingDay}-${scheduleCell.classNumber}-${scheduleCell.weekNumber}`) === 1
   );
 }

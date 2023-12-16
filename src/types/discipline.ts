@@ -1,4 +1,4 @@
-import { WeeklyAvailableClasses } from "./meta";
+import { WeeklyAvailableScheduleCells } from "./meta";
 
 // Тип заняття. Приклад: "Лекційне заняття"
 export type DisciplineClassType = {
@@ -14,7 +14,7 @@ export type DisciplineClass = {
   shortName: string; // "Мат. анал."
   fullName: string; // "Математичний аналіз"
   typeId: number;
-  classesPerWeek: number; // Кількість занять на тиждень. Приклад: 0.5 занять на тиждень і цикл 2 тижні – одне заняття на два тижні
+  assignedScheduleCellsPerWeek: number; // Кількість занять на тиждень. Приклад: 0.5 занять на тиждень і цикл 2 тижні – одне заняття на два тижні
   maxGroupsPerClass: number; // Максимальна кількість груп на одному занятті
   online: boolean; // Чи заняття онлайн
   appropriateRoomTypeIds: Array<number>; // Типи аудиторій, що підходять для проведення заняття
@@ -23,9 +23,6 @@ export type DisciplineClass = {
   // Це несуворе обмеження, тобто назначається стільки викладачів, скільки дозволяють обмеження,
   // з намаганням максимізувати до необхідної кількості
   numberOfLecturersPerRoomRequired: number;
-
-  // TODO: Add support for it
-  // numberOfRoomsRequired: number; // Кількість аудиторій, що потребується для проведення одного заняття
 
   facultyId?: number; // Опціонально, можливість привʼязати заняття тільки для груп конкретного факультету. Тоді потік складається з груп факультету
   facultyDepartmentId?: number; // Опціонально, можливість привʼязати заняття тільки для груп конкретної кафедри факультету. Тоді потік складається з груп кафедри
@@ -37,6 +34,6 @@ export type Lecturer = {
   id: number;
   name: string;
   // Графік доступності викладача протягом тижня (пари, на яких викладач доступний для роботи)
-  weeklyAvailableClasses: WeeklyAvailableClasses;
+  weeklyAvailableScheduleCells: WeeklyAvailableScheduleCells;
   disciplineClassIds: Array<number>; // Заняття, які може проводити викладач
 }

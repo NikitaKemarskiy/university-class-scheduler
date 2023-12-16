@@ -24,9 +24,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Мат. анал. 1",
     fullName: "Математичний аналіз. Частина 1. Диференціальне числення",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [2],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 4,
     facultyId: 1,
@@ -37,9 +36,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Мат. анал. 1",
     fullName: "Математичний аналіз. Частина 1. Диференціальне числення",
     typeId: 2,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -50,9 +48,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Лін. алг. та анал. геом.",
     fullName: "Лінійна алгебра та аналітична геометрія",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [2],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 4,
     facultyId: 1,
@@ -63,9 +60,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Лін. алг. та анал. геом.",
     fullName: "Лінійна алгебра та аналітична геометрія",
     typeId: 2,
-    classesPerWeek: 0.5,
+    assignedScheduleCellsPerWeek: 0.5,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -76,9 +72,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Алг. та структ. даних 1",
     fullName: "Алгоритми та структури даних. Частина 1. Основи алгоритмізації",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [1],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 2,
     facultyId: 1,
@@ -89,9 +84,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Алг. та структ. даних 1",
     fullName: "Алгоритми та структури даних. Частина 1. Основи алгоритмізації",
     typeId: 3,
-    classesPerWeek: 0.5,
+    assignedScheduleCellsPerWeek: 0.5,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -102,9 +96,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. здор.",
     fullName: "Основи здорового способу життя",
     typeId: 1,
-    classesPerWeek: 0.5,
+    assignedScheduleCellsPerWeek: 0.5,
     appropriateRoomTypeIds: [2],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 6,
     facultyId: 1,
@@ -115,9 +108,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. здор.",
     fullName: "Основи здорового способу життя",
     typeId: 2,
-    classesPerWeek: 0.5,
+    assignedScheduleCellsPerWeek: 0.5,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 2,
     facultyId: 1,
@@ -128,9 +120,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. прог. 1",
     fullName: "Основи програмування. Частина 1. Базові конструкції",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [1],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 2,
     facultyId: 1,
@@ -141,9 +132,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. прог. 1",
     fullName: "Основи програмування. Частина 1. Базові конструкції",
     typeId: 2,
-    classesPerWeek: 0.5,
+    assignedScheduleCellsPerWeek: 0.5,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -154,9 +144,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. прог. 1",
     fullName: "Основи програмування. Частина 1. Базові конструкції",
     typeId: 3,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [4],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -167,9 +156,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Комп. дискр. мат.",
     fullName: "Комп'ютерна дискретна математика",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [1],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 2,
     facultyId: 1,
@@ -180,9 +168,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Комп. дискр. мат.",
     fullName: "Комп'ютерна дискретна математика",
     typeId: 2,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -193,9 +180,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Заг. фіз. 1",
     fullName: "Фізика. Частина 1. Загальна фізика І",
     typeId: 1,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [2],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 4,
     facultyId: 1,
@@ -206,9 +192,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Заг. фіз. 1",
     fullName: "Фізика. Частина 1. Загальна фізика І",
     typeId: 2,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [3],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -219,9 +204,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. прог. 1",
     fullName: "Програмування. Частина 1. Основи програмування",
     typeId: 1,
-    classesPerWeek: 1.5,
+    assignedScheduleCellsPerWeek: 1.5,
     appropriateRoomTypeIds: [1],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 2,
     facultyId: 1,
@@ -232,9 +216,8 @@ export const disciplineClasses: Array<DisciplineClass> = [
     shortName: "Осн. прог. 1",
     fullName: "Програмування. Частина 1. Основи програмування",
     typeId: 3,
-    classesPerWeek: 1,
+    assignedScheduleCellsPerWeek: 1,
     appropriateRoomTypeIds: [4],
-    // numberOfRoomsRequired: 1,
     numberOfLecturersPerRoomRequired: 1,
     maxGroupsPerClass: 1,
     facultyId: 1,
@@ -246,7 +229,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 1,
     name: "доц. Боднарчук С. В.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [1,2,3,4,5],
@@ -260,7 +243,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 2,
     name: "ас. Лагодзінський О. Є.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5],
       TUESDAY: [],
       WEDNESDAY: [1,2,3,4,5],
@@ -274,7 +257,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 3,
     name: "доц. Круглова Н. В.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [],
@@ -288,7 +271,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 4,
     name: "ст.вик. Вєчерковська А. С.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [1,2,3,4,5],
@@ -302,7 +285,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 5,
     name: "ст.вик. Вітковська І. І.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [1,2,3,4,5],
@@ -316,7 +299,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 6,
     name: "доц. Міщук Д. М.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [1,2,3,4,5],
@@ -330,7 +313,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 7,
     name: "ст.вик. Чиченьова О. М.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3,4,5],
       TUESDAY: [1,2,3,4,5],
       WEDNESDAY: [1,2,3,4,5],
@@ -344,7 +327,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 8,
     name: "доц. Лісовиченко О. І.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3],
       TUESDAY: [3,4,5],
       WEDNESDAY: [2,3,4,5],
@@ -358,7 +341,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 9,
     name: "пос. Ліхоузова Т. А.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3],
       TUESDAY: [3,4,5],
       WEDNESDAY: [2,3,4,5],
@@ -372,7 +355,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 10,
     name: "доц. Климук О. С.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3],
       TUESDAY: [3,4,5],
       WEDNESDAY: [2,3,4,5],
@@ -386,7 +369,7 @@ export const lecturers: Array<Lecturer> = [
   {
     id: 11,
     name: "пос. Проскура С. Л.",
-    weeklyAvailableClasses: {
+    weeklyAvailableScheduleCells: {
       MONDAY: [1,2,3],
       TUESDAY: [3,4,5],
       WEDNESDAY: [2,3,4,5],
