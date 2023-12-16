@@ -4,10 +4,10 @@ import {
   Lecturer,
   Schedule,
   ScheduleCell,
-} from "../..";
+} from "../../..";
 import { Individual } from "./individual";
-import { DisciplineClassAssigned, GeneticAlgorithmParams, GeneticAlgorithmSchedulerParams } from "./types";
-import { getAssignedScheduleCellsByDays } from "./helpers";
+import { DisciplineClassAssigned, GeneticAlgorithmParams, GeneticAlgorithmSchedulerParams } from "../types";
+import { getAssignedScheduleCellsByDays } from "../helpers";
 
 export class ScheduleCellAssigner {
   constructor(
@@ -15,7 +15,7 @@ export class ScheduleCellAssigner {
     private readonly geneticAlgorithmParams: GeneticAlgorithmParams,
   ) {}
 
-  assignAssignedScheduleCells(disciplineClassesAssigned: Array<DisciplineClassAssigned>): Schedule {
+  assignScheduleCells(disciplineClassesAssigned: Array<DisciplineClassAssigned>): Schedule {
     let population: Array<Individual> | undefined;
     
     for (let i = 0; i < this.geneticAlgorithmParams.maxIterations; i++) {
@@ -180,8 +180,8 @@ export class ScheduleCellAssigner {
     }, 0) / (groups.length || 1);
 
     const lectionsScheduleCells: Array<ScheduleCell> = individual.disciplineClassesAssigned.flatMap(
-      ({ disciplineId }, index) => {
-        const disciplineClass = this.params.disciplineClasses.get(disciplineId);
+      ({ disciplineClassId }, index) => {
+        const disciplineClass = this.params.disciplineClasses.get(disciplineClassId);
 
         return disciplineClass?.typeId === 1
           ? individual.scheduleCells[index]

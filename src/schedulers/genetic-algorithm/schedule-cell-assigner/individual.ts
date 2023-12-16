@@ -1,8 +1,8 @@
-import { ImpossibleToGenerateScheduleError } from "../../errors";
-import { getUniqueScheduleCells } from "../../helpers";
-import { ScheduleCell, AssignedScheduleCell } from "../../types";
-import { getAvailabilityDifference, getAvailabilityIntersection } from "./helpers";
-import { Availability, DisciplineClassAssigned, GeneticAlgorithmSchedulerParams, _Room } from "./types";
+import { ImpossibleToGenerateScheduleError } from "../../../errors";
+import { getUniqueScheduleCells } from "../../../helpers";
+import { ScheduleCell, AssignedScheduleCell } from "../../../types";
+import { getAvailabilityDifference, getAvailabilityIntersection } from "../helpers";
+import { Availability, DisciplineClassAssigned, GeneticAlgorithmSchedulerParams, _Room } from "../types";
 
 export class Individual {
   public disciplineClassesAssigned: Array<DisciplineClassAssigned>;
@@ -226,7 +226,7 @@ export class Individual {
     for (let i = 0; i < this.disciplineClassesAssigned.length; i++) {
       assignedScheduleCells.push(...this.scheduleCells[i].map((scheduleCell: ScheduleCell) => ({
         scheduleCell,
-        disciplineId: this.disciplineClassesAssigned[i].disciplineId,
+        disciplineClassId: this.disciplineClassesAssigned[i].disciplineClassId,
         online: this.disciplineClassesAssigned[i].online,
         lecturerIds: this.disciplineClassesAssigned[i].lecturerIds,
         groupIds: this.disciplineClassesAssigned[i].groupIds,

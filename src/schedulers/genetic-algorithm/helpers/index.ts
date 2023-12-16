@@ -1,4 +1,4 @@
-import { ScheduleCell, DayOfWeek, WeeklyAvailableScheduleCells, AssignedScheduleCell } from "../../../types";
+import { DayOfWeek, WeeklyAvailableScheduleCells, AssignedScheduleCell } from "../../../types";
 import { Availability } from "../types";
 
 export function convertEntityArrayToMap<T extends { id: number; }>(items: Array<T>): Map<number, T> {

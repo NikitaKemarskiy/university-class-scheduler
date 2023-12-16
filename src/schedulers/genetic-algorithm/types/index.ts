@@ -47,7 +47,7 @@ export type GeneticAlgorithmSchedulerParams = {
 };
 
 export type DisciplineClassAssigned = {
-  disciplineId: number;
+  disciplineClassId: number;
   lecturerIds: Array<number>;
   groupIds: Array<number>;
   assignedScheduleCellsPerCycle: number;

@@ -1,15 +1,8 @@
 import {
-  DisciplineClass,
   Schedule,
   Scheduler,
   SchedulerParams,
 } from "../..";
-
-// disciplineClassesAssigned dataset is used to implement the second subtask solution first, because it's more important
-// and it has ready-to-use genetic algorithm tips.
-// TODO: Implement another method to calculate disciplineClassAssigned: DisciplineClassAssigned[] array
-// (i.e. to solve the first subtask).
-import { disciplineClassesAssignedPartial } from './test-data/disciplineClassAssignedPartial';
 import { DisciplineClassAssigned, GeneticAlgorithmParams, GeneticAlgorithmSchedulerParams } from "./types";
 import {
   convertEntityArrayToMap,
@@ -23,7 +16,8 @@ export class GeneticAlgorithmScheduler extends Scheduler {
 
   constructor(
     params: SchedulerParams,
-    private readonly geneticAlgorithmParams: GeneticAlgorithmParams
+    private readonly disciplineClassesAssigned: Array<DisciplineClassAssigned>,
+    private readonly geneticAlgorithmParams: GeneticAlgorithmParams,
   ) {
     super(params);
 
@@ -66,27 +60,14 @@ export class GeneticAlgorithmScheduler extends Scheduler {
     }
     this.validateGeneticAlgorithmParamsOrThrow();
 
-    this.scheduleCellAssigner = new ScheduleCellAssigner(this.params, this.geneticAlgorithmParams);
+    this.scheduleCellAssigner = new ScheduleCellAssigner(
+      this.params,
+      this.geneticAlgorithmParams
+    );
   }
 
   generateSchedule(): Schedule {
-    const disciplineClassesAssigned: Array<DisciplineClassAssigned> = disciplineClassesAssignedPartial
-      .map((disciplineClassAssigned) => {
-        const discipline: DisciplineClass = this.params.disciplineClasses.get(disciplineClassAssigned.disciplineId)!;
-        
-        return {
-          disciplineId: disciplineClassAssigned.disciplineId,
-          lecturerIds: disciplineClassAssigned.lecturerIds,
-          groupIds: disciplineClassAssigned.groupIds,
-          assignedScheduleCellsPerCycle: discipline.assignedScheduleCellsPerWeek * this.params.options.weeksPerCycle,
-          online: discipline.online,
-          appropriateRoomTypeIds: discipline.appropriateRoomTypeIds,
-          facultyId: discipline.facultyId,
-          facultyDepartmentId: discipline.facultyDepartmentId,
-        };
-      });
-
-    return this.scheduleCellAssigner.assignAssignedScheduleCells(disciplineClassesAssigned);
+    return this.scheduleCellAssigner.assignScheduleCells(this.disciplineClassesAssigned);
   }
 
   private validateGeneticAlgorithmParamsOrThrow(): void {

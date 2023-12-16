@@ -1,45 +1,45 @@
 export const disciplineClassesAssignedPartial: Array<{
-  disciplineId: number;
+  disciplineClassId: number;
   lecturerIds: Array<number>;
   groupIds: Array<number>;
 }> = [{
-  disciplineId: 1,
+  disciplineClassId: 1,
   lecturerIds: [1],
   groupIds: [1,2,3,4],
 }, {
-  disciplineId: 2,
+  disciplineClassId: 2,
   lecturerIds: [2],
   groupIds: [1],
 }, {
-  disciplineId: 2,
+  disciplineClassId: 2,
   lecturerIds: [2],
   groupIds: [2],
 }, {
-  disciplineId: 2,
+  disciplineClassId: 2,
   lecturerIds: [2],
   groupIds: [3],
 }, {
-  disciplineId: 2,
+  disciplineClassId: 2,
   lecturerIds: [2],
   groupIds: [4],
 }, {
-  disciplineId: 3,
+  disciplineClassId: 3,
   lecturerIds: [3],
   groupIds: [1,2,3,4],
 }, {
-  disciplineId: 4,
+  disciplineClassId: 4,
   lecturerIds: [3],
   groupIds: [1],
 }, {
-  disciplineId: 4,
+  disciplineClassId: 4,
   lecturerIds: [3],
   groupIds: [2],
 }, {
-  disciplineId: 4,
+  disciplineClassId: 4,
   lecturerIds: [3],
   groupIds: [3],
 }, {
-  disciplineId: 4,
+  disciplineClassId: 4,
   lecturerIds: [3],
   groupIds: [4],
 }];

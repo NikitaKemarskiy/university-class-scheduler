@@ -15,7 +15,7 @@ export type ScheduleCell = {
 // "Комірка" розкладу. Приклад: Математичний аналіз лекція на першому занятті
 export type AssignedScheduleCell = {
   scheduleCell: ScheduleCell;
-  disciplineId: number;
+  disciplineClassId: number;
   online: boolean;
   lecturerIds: Array<number>; // Може бути кілька викладачів на одному занятті одночасно
   // Якщо потребується кілька аудиторій для проведення одного заняття – це різні комірки розкладу
