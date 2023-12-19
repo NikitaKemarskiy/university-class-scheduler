@@ -24,11 +24,11 @@ export class ScheduleCellAssigner {
       } else {
         population = this.generateInitialPopulation(disciplineClassesAssigned);
 
-        console.log(`Initial population generated. First item: ${JSON.stringify(population[0])}`);
+        // console.log(`Initial population generated. First item: ${JSON.stringify(population[0])}`);
       }
 
       // Log to get insight into the process of algorithm execution
-      if (i % 50 === 0) {
+      if (i % 50 === 0 || i === this.geneticAlgorithmParams.maxIterations - 1) {
         console.dir({
           iteration: i,
           timestamp: Date.now(),
@@ -47,7 +47,7 @@ export class ScheduleCellAssigner {
       throw new Error('No solution found');
     }
 
-    const [topIndividual] = population
+    const [topIndividual] = [...population]
       .map((individual) => ({
         individual,
         fitnessFunctionValue: this.fitnessFunction(individual),
@@ -77,9 +77,7 @@ export class ScheduleCellAssigner {
     });
   }
 
-  private getNextPopulation(
-    population: Array<Individual>
-  ): Array<Individual> {
+  private getNextPopulation(population: Array<Individual>): Array<Individual> {
     const eliteIndividuals: Array<Individual> = [...population]
       .sort((i1, i2) =>
         this.fitnessFunction(i1) -
@@ -197,7 +195,7 @@ export class ScheduleCellAssigner {
     const lecturerBuldingsTransitionsAbsenceNonFulfillmentDegree = lecturers
       .reduce((accum: number, lecturer: Lecturer) => {
         const lecturerAssignedScheduleCellsByDays: Array<Array<AssignedScheduleCell>> = getAssignedScheduleCellsByDays(
-          schedule.getScheduleCells({ lecturerId: lecturer.id })
+          schedule.getAssignedScheduleCells({ lecturerId: lecturer.id })
         );
 
         return accum + this.getBuldingsTransitionsAbsenceNonFulfillmentDegree(
@@ -208,7 +206,7 @@ export class ScheduleCellAssigner {
     const groupBuldingsTransitionsAbsenceNonFulfillmentDegree = groups
       .reduce((accum: number, group: Group) => {
         const groupAssignedScheduleCellsByDays: Array<Array<AssignedScheduleCell>> = getAssignedScheduleCellsByDays(
-          schedule.getScheduleCells({ groupId: group.id })
+          schedule.getAssignedScheduleCells({ groupId: group.id })
         );
 
         return accum + this.getBuldingsTransitionsAbsenceNonFulfillmentDegree(
@@ -218,7 +216,7 @@ export class ScheduleCellAssigner {
 
     const lecturerWindowsAbsenceNonFulfillmentDegree = lecturers.reduce((accum: number, lecturer: Lecturer) => {
       const lecturerAssignedScheduleCellsByDays: Array<Array<AssignedScheduleCell>>= getAssignedScheduleCellsByDays(
-        schedule.getScheduleCells({ lecturerId: lecturer.id })
+        schedule.getAssignedScheduleCells({ lecturerId: lecturer.id })
       );
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(lecturerAssignedScheduleCellsByDays);
@@ -226,7 +224,7 @@ export class ScheduleCellAssigner {
 
     const groupWindowsAbsenceNonFulfillmentDegree = groups.reduce((accum: number, group: Group) => {
       const groupAssignedScheduleCellsByDays: Array<Array<AssignedScheduleCell>> = getAssignedScheduleCellsByDays(
-        schedule.getScheduleCells({ groupId: group.id })
+        schedule.getAssignedScheduleCells({ groupId: group.id })
       );
 
       return accum + this.getWindowsAbsenceNonFulfillmentDegree(groupAssignedScheduleCellsByDays);

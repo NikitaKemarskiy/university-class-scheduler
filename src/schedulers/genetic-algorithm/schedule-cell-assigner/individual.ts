@@ -22,53 +22,6 @@ export class Individual {
     this.schedulerParams = params.schedulerParams;
   }
 
-  getRoomAvailability(room: _Room): Availability {
-    const roomScheduleCells = this.disciplineClassesAssigned.flatMap(
-      (_, index) => this.roomIds[index] === room.id
-        ? this.scheduleCells[index]
-        : []
-    );
-
-    return getAvailabilityDifference([
-      room.availability,
-      roomScheduleCells,
-    ]);
-  }
-
-  getDisciplineClassAssignedAvailability(disciplineClassAssigned: DisciplineClassAssigned): Availability {
-    // Get lecturers availabilites intersection
-    const lecturersAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.lecturerIds.map((lecturerId) => {
-      const lecturerScheduleCells = this.disciplineClassesAssigned.flatMap(
-        (_, index) => this.disciplineClassesAssigned[index].lecturerIds.includes(lecturerId)
-          ? this.scheduleCells[index]
-          : []
-      );
-      return getAvailabilityDifference([
-        this.schedulerParams.lecturers.get(lecturerId)!.availability,
-        lecturerScheduleCells,
-      ]);
-    }));
-  
-    // Get groups availabilites intersection
-    const groupsAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.groupIds.map(groupId => {
-      const groupScheduleCells = this.disciplineClassesAssigned.flatMap(
-        (_, index) => this.disciplineClassesAssigned[index].groupIds.includes(groupId)
-          ? this.scheduleCells[index]
-          : []
-      );
-      return getAvailabilityDifference([
-        this.schedulerParams.groupTypes.get(this.schedulerParams.groups.get(groupId)!.typeId)!.availability,
-        groupScheduleCells,
-      ]);
-    }));
-  
-    // Return lecturers and groups availabilites intersection
-    return getAvailabilityIntersection([
-      lecturersAvailability,
-      groupsAvailability,
-    ]);
-  }
-
   isAppropriate(): boolean {
     return ![
       // Перевірка "накладок" та дотримання ліміту занять на день у груп
@@ -84,6 +37,7 @@ export class Individual {
 
         // Присутня "накладка" у групи
         if (getUniqueScheduleCells(groupScheduleCells).length !== groupScheduleCells.length) {
+          // console.log(`Присутня "накладка" у групи: ${JSON.stringify({ group, groupScheduleCells })}`);
           return true;
         }
 
@@ -107,6 +61,7 @@ export class Individual {
         // Кількість занять на день більша за ліміт
         groupScheduleCellsByDays.forEach((groupScheduleCellsByDay) => {
           if (groupScheduleCellsByDay.length > groupType.maxAssignedScheduleCellsPerDay) {
+            // console.log(`Кількість занять на день більша за ліміт: ${JSON.stringify({ group, groupScheduleCellsByDay })}`);
             return true;
           }
         })
@@ -121,6 +76,7 @@ export class Individual {
 
         // Присутня "накладка" у аудиторії
         if (getUniqueScheduleCells(roomScheduleCells).length !== roomScheduleCells.length) {
+          // console.log(`Присутня "накладка" у аудиторії: ${JSON.stringify({ roomId, roomScheduleCells })}`);
           return true;
         }
 
@@ -133,6 +89,7 @@ export class Individual {
             roomScheduleCells,
           ]).length !== roomScheduleCells.length
         ) {
+          // console.log(`Аудиторія недоступна в назначений час: ${JSON.stringify({ roomId, roomScheduleCells, roomAvailability: room.availability, })}`);
           return true;
         }
       }),
@@ -146,12 +103,14 @@ export class Individual {
 
         // Присутня "накладка" у викладача
         if (getUniqueScheduleCells(lecturerScheduleCells).length !== lecturerScheduleCells.length) {
+          // console.log(`Присутня "накладка" у викладача: ${JSON.stringify({ lecturerId, lecturerScheduleCells })}`);
           return true;
         }
       }),
       // Перевірка обсягу проведених занять та вимог до аудиторій
       this.disciplineClassesAssigned.some((disciplineClassAssigned, index) => {
         if (this.scheduleCells[index].length !== disciplineClassAssigned.assignedScheduleCellsPerCycle) {
+          // console.log(`Перевірка обсягу проведених занять та вимог до аудиторій: ${JSON.stringify({ disciplineClassAssigned })}`);
           return true;
         }
 
@@ -164,15 +123,16 @@ export class Individual {
           || room.capacityGroups < disciplineClassAssigned.groupIds.length
           // Аудиторія привʼязана до іншого факультету, аніж дисципліна
           || (
-            disciplineClassAssigned.facultyId
+            room.facultyId
             && room.facultyId !== disciplineClassAssigned.facultyId
           )
           // Аудиторія привʼязана до іншої кафедри, аніж дисципліна
           || (
-            disciplineClassAssigned.facultyDepartmentId
+            room.facultyDepartmentId
             && room.facultyDepartmentId !== disciplineClassAssigned.facultyDepartmentId
           )
         ) {
+          // console.log(`Інші перевірки: ${JSON.stringify({ disciplineClassAssigned })}`);
           return true;
         }
       })
@@ -347,6 +307,53 @@ export class Individual {
     }
 
     return mutatedIndividual;
+  }
+
+  private getRoomAvailability(room: _Room): Availability {
+    const roomScheduleCells = this.disciplineClassesAssigned.flatMap(
+      (_, index) => this.roomIds[index] === room.id
+        ? this.scheduleCells[index]
+        : []
+    );
+
+    return getAvailabilityDifference([
+      room.availability,
+      roomScheduleCells,
+    ]);
+  }
+
+  private getDisciplineClassAssignedAvailability(disciplineClassAssigned: DisciplineClassAssigned): Availability {
+    // Get lecturers availabilites intersection
+    const lecturersAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.lecturerIds.map((lecturerId) => {
+      const lecturerScheduleCells = this.disciplineClassesAssigned.flatMap(
+        (_, index) => this.disciplineClassesAssigned[index].lecturerIds.includes(lecturerId)
+          ? this.scheduleCells[index]
+          : []
+      );
+      return getAvailabilityDifference([
+        this.schedulerParams.lecturers.get(lecturerId)!.availability,
+        lecturerScheduleCells,
+      ]);
+    }));
+  
+    // Get groups availabilites intersection
+    const groupsAvailability: Availability = getAvailabilityIntersection(disciplineClassAssigned.groupIds.map(groupId => {
+      const groupScheduleCells = this.disciplineClassesAssigned.flatMap(
+        (_, index) => this.disciplineClassesAssigned[index].groupIds.includes(groupId)
+          ? this.scheduleCells[index]
+          : []
+      );
+      return getAvailabilityDifference([
+        this.schedulerParams.groupTypes.get(this.schedulerParams.groups.get(groupId)!.typeId)!.availability,
+        groupScheduleCells,
+      ]);
+    }));
+  
+    // Return lecturers and groups availabilites intersection
+    return getAvailabilityIntersection([
+      lecturersAvailability,
+      groupsAvailability,
+    ]);
   }
 
   private static getAppropriateRooms(

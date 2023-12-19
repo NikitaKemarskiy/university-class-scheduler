@@ -44,6 +44,7 @@ export type GeneticAlgorithmSchedulerParams = {
   disciplineClassTypes: Map<number, DisciplineClassType>;
   disciplineClasses: Map<number, DisciplineClass>;
   lecturers: Map<number, _Lecturer>;
+  disciplineClassesAssigned: Array<DisciplineClassAssigned>;
 };
 
 export type DisciplineClassAssigned = {

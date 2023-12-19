@@ -15,8 +15,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
   private readonly scheduleCellAssigner: ScheduleCellAssigner;
 
   constructor(
-    params: SchedulerParams,
-    private readonly disciplineClassesAssigned: Array<DisciplineClassAssigned>,
+    params: SchedulerParams & { disciplineClassesAssigned: Array<DisciplineClassAssigned> },
     private readonly geneticAlgorithmParams: GeneticAlgorithmParams,
   ) {
     super(params);
@@ -57,6 +56,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
           ),
         }))
       ),
+      disciplineClassesAssigned: params.disciplineClassesAssigned,
     }
     this.validateGeneticAlgorithmParamsOrThrow();
 
@@ -67,7 +67,7 @@ export class GeneticAlgorithmScheduler extends Scheduler {
   }
 
   generateSchedule(): Schedule {
-    return this.scheduleCellAssigner.assignScheduleCells(this.disciplineClassesAssigned);
+    return this.scheduleCellAssigner.assignScheduleCells(this.params.disciplineClassesAssigned);
   }
 
   private validateGeneticAlgorithmParamsOrThrow(): void {

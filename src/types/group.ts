@@ -1,8 +1,8 @@
 import { WeeklyAvailableScheduleCells } from "./meta";
 
 export enum AcademicDegree {
-  BACHELOR = "BACHELOR",
-  MASTER = "MASTER",
+  BACHELOR,
+  MASTER,
 }
 
 // Тип групи: "Денна", "Заочна" тощо

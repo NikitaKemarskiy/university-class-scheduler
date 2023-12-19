@@ -18,6 +18,11 @@ export const faculties: Array<Faculty> = [
     id: 1,
     shortName: "ФІОТ",
     fullName: "Факультет інформаційних технологій"
+  },
+  {
+    id: 2,
+    shortName: "ФПМ",
+    fullName: "Факультет прикладної математики"
   }
 ];
 
@@ -33,6 +38,12 @@ export const facultyDepartments: Array<FacultyDepartment> = [
     shortName: "ОТ",
     fullName: "Кафедра обчислювальних технологій",
     facultyId: 1
+  },
+  {
+    id: 3,
+    shortName: "ПМ",
+    fullName: "Кафедра прикладної математики",
+    facultyId: 2
   }
 ];
 
@@ -61,14 +72,13 @@ export const rooms: Array<Room> = [
     name: '202',
     typeId: 2,
     buildingId: 1,
-    facultyId: 1,
     capacityGroups: 5,
     weeklyAvailableScheduleCells: {
-      [DayOfWeek.MONDAY]: [1,2,3,4,5],
-      [DayOfWeek.TUESDAY]: [1,2,3],
-      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
-      [DayOfWeek.THURSDAY]: [1,2,3],
-      [DayOfWeek.FRIDAY]: [1,2,3,4,5],
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
       [DayOfWeek.SATURDAY]: [],
       [DayOfWeek.SUNDAY]: []
     }
@@ -81,11 +91,11 @@ export const rooms: Array<Room> = [
     facultyId: 1,
     capacityGroups: 2,
     weeklyAvailableScheduleCells: {
-      [DayOfWeek.MONDAY]: [1,2,3,4,5],
-      [DayOfWeek.TUESDAY]: [1,2,3],
-      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
-      [DayOfWeek.THURSDAY]: [1,2,3],
-      [DayOfWeek.FRIDAY]: [1,2,3,4,5],
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
       [DayOfWeek.SATURDAY]: [],
       [DayOfWeek.SUNDAY]: []
     }
@@ -98,11 +108,11 @@ export const rooms: Array<Room> = [
     facultyId: 1,
     capacityGroups: 1,
     weeklyAvailableScheduleCells: {
-      [DayOfWeek.MONDAY]: [1,2,3,4,5],
-      [DayOfWeek.TUESDAY]: [1,2,3],
-      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
-      [DayOfWeek.THURSDAY]: [1,2,3],
-      [DayOfWeek.FRIDAY]: [1,2,3,4,5],
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
       [DayOfWeek.SATURDAY]: [],
       [DayOfWeek.SUNDAY]: []
     }
@@ -115,11 +125,11 @@ export const rooms: Array<Room> = [
     facultyId: 1,
     capacityGroups: 2,
     weeklyAvailableScheduleCells: {
-      [DayOfWeek.MONDAY]: [1,2,3,4,5],
-      [DayOfWeek.TUESDAY]: [1,2,3],
-      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
-      [DayOfWeek.THURSDAY]: [1,2,3],
-      [DayOfWeek.FRIDAY]: [1,2,3,4,5],
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
       [DayOfWeek.SATURDAY]: [],
       [DayOfWeek.SUNDAY]: []
     }
@@ -132,11 +142,77 @@ export const rooms: Array<Room> = [
     facultyId: 1,
     capacityGroups: 1,
     weeklyAvailableScheduleCells: {
-      [DayOfWeek.MONDAY]: [1,2,3,4,5],
-      [DayOfWeek.TUESDAY]: [1,2,3],
-      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5],
-      [DayOfWeek.THURSDAY]: [1,2,3],
-      [DayOfWeek.FRIDAY]: [1,2,3,4,5],
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.SATURDAY]: [],
+      [DayOfWeek.SUNDAY]: []
+    }
+  },
+  {
+    id: 6,
+    name: '202',
+    typeId: 2,
+    buildingId: 2,
+    capacityGroups: 5,
+    weeklyAvailableScheduleCells: {
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.SATURDAY]: [],
+      [DayOfWeek.SUNDAY]: []
+    }
+  },
+  {
+    id: 7,
+    name: '211',
+    typeId: 1,
+    buildingId: 2,
+    facultyId: 2,
+    capacityGroups: 2,
+    weeklyAvailableScheduleCells: {
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.SATURDAY]: [],
+      [DayOfWeek.SUNDAY]: []
+    }
+  },
+  {
+    id: 8,
+    name: '323',
+    typeId: 3,
+    buildingId: 2,
+    facultyId: 2,
+    capacityGroups: 1,
+    weeklyAvailableScheduleCells: {
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.SATURDAY]: [],
+      [DayOfWeek.SUNDAY]: []
+    }
+  },
+  {
+    id: 9,
+    name: '323',
+    typeId: 3,
+    buildingId: 2,
+    capacityGroups: 2,
+    weeklyAvailableScheduleCells: {
+      [DayOfWeek.MONDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.TUESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.WEDNESDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.THURSDAY]: [1,2,3,4,5,6,7],
+      [DayOfWeek.FRIDAY]: [1,2,3,4,5,6,7],
       [DayOfWeek.SATURDAY]: [],
       [DayOfWeek.SUNDAY]: []
     }

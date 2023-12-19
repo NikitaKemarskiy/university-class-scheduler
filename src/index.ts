@@ -36,12 +36,12 @@ export type SchedulerParams = {
 export class Schedule {
   constructor(private readonly assignedScheduleCells: Array<AssignedScheduleCell>) {}
 
-  getScheduleCells(filter: {
+  getAssignedScheduleCells(filter: {
     lecturerId?: number,
     groupId?: number,
     roomId?: number,
   } = {}): Array<AssignedScheduleCell> {
-    let filteredAssignedScheduleCells = this.assignedScheduleCells;
+    let filteredAssignedScheduleCells = [...this.assignedScheduleCells];
 
     if (filter.lecturerId) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
@@ -61,7 +61,17 @@ export class Schedule {
       );
     }
 
-    return filteredAssignedScheduleCells;
+    return filteredAssignedScheduleCells.sort(
+      (assignedScheduleCell1: AssignedScheduleCell, assignedScheduleCell2: AssignedScheduleCell) => {
+        if (assignedScheduleCell1.scheduleCell.weekNumber !== assignedScheduleCell2.scheduleCell.weekNumber) {
+          return assignedScheduleCell1.scheduleCell.weekNumber - assignedScheduleCell2.scheduleCell.weekNumber;
+        } else if (assignedScheduleCell1.scheduleCell.workingDay !== assignedScheduleCell2.scheduleCell.workingDay) {
+          return assignedScheduleCell1.scheduleCell.workingDay - assignedScheduleCell2.scheduleCell.workingDay;
+        } else {
+          return assignedScheduleCell1.scheduleCell.classNumber - assignedScheduleCell2.scheduleCell.classNumber;
+        }
+      }
+    );
   }
 }
 
@@ -85,7 +95,7 @@ export abstract class Scheduler {
       params.lecturers,
     ].forEach((items: Array<{ id: number }>) => items.forEach((item) => {
       if (items.filter(({ id }) => item.id === id).length > 1) {
-        throw new Error(`ID duplicate found: ${item.id}`);
+        throw new Error(`ID duplicate found: ${JSON.stringify(item)}`);
       }
     }));
   }

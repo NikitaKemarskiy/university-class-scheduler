@@ -5,7 +5,7 @@ export const disciplineClassesAssignedPartial: Array<{
 }> = [{
   disciplineClassId: 1,
   lecturerIds: [1],
-  groupIds: [1,2,3,4],
+  groupIds: [1,2],
 }, {
   disciplineClassId: 2,
   lecturerIds: [2],
@@ -14,18 +14,10 @@ export const disciplineClassesAssignedPartial: Array<{
   disciplineClassId: 2,
   lecturerIds: [2],
   groupIds: [2],
-}, {
-  disciplineClassId: 2,
-  lecturerIds: [2],
-  groupIds: [3],
-}, {
-  disciplineClassId: 2,
-  lecturerIds: [2],
-  groupIds: [4],
 }, {
   disciplineClassId: 3,
   lecturerIds: [3],
-  groupIds: [1,2,3,4],
+  groupIds: [1,2],
 }, {
   disciplineClassId: 4,
   lecturerIds: [3],
@@ -35,11 +27,331 @@ export const disciplineClassesAssignedPartial: Array<{
   lecturerIds: [3],
   groupIds: [2],
 }, {
-  disciplineClassId: 4,
-  lecturerIds: [3],
+  disciplineClassId: 5,
+  lecturerIds: [4],
+  groupIds: [1,2],
+}, {
+  disciplineClassId: 5,
+  lecturerIds: [4],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 5,
+  lecturerIds: [4],
+  groupIds: [5,6],
+}, {
+  disciplineClassId: 6,
+  lecturerIds: [5],
+  groupIds: [1],
+}, {
+  disciplineClassId: 6,
+  lecturerIds: [5],
+  groupIds: [2],
+}, {
+  disciplineClassId: 6,
+  lecturerIds: [5],
   groupIds: [3],
 }, {
-  disciplineClassId: 4,
-  lecturerIds: [3],
+  disciplineClassId: 6,
+  lecturerIds: [5],
   groupIds: [4],
+}, {
+  disciplineClassId: 6,
+  lecturerIds: [5],
+  groupIds: [5],
+}, {
+  disciplineClassId: 6,
+  lecturerIds: [5],
+  groupIds: [6],
+}, {
+  disciplineClassId: 7,
+  lecturerIds: [6],
+  groupIds: [1,2,3,4,5],
+}, {
+  disciplineClassId: 7,
+  lecturerIds: [6],
+  groupIds: [6,9,10],
+}, {
+  disciplineClassId: 8,
+  lecturerIds: [7],
+  groupIds: [1,2],
+}, {
+  disciplineClassId: 8,
+  lecturerIds: [7],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 8,
+  lecturerIds: [7],
+  groupIds: [5,6],
+}, {
+  disciplineClassId: 8,
+  lecturerIds: [7],
+  groupIds: [9,10],
+}, {
+  disciplineClassId: 9,
+  lecturerIds: [8],
+  groupIds: [1,2],
+}, {
+  disciplineClassId: 9,
+  lecturerIds: [8],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 9,
+  lecturerIds: [8],
+  groupIds: [5,6],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [1],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [2],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [3],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [4],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [5],
+}, {
+  disciplineClassId: 10,
+  lecturerIds: [8],
+  groupIds: [6],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [1],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [2],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [3],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [4],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [5],
+}, {
+  disciplineClassId: 11,
+  lecturerIds: [8],
+  groupIds: [6],
+}, {
+  disciplineClassId: 12,
+  lecturerIds: [9],
+  groupIds: [1,2],
+}, {
+  disciplineClassId: 12,
+  lecturerIds: [9],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 12,
+  lecturerIds: [9],
+  groupIds: [5,6],
+}, {
+  disciplineClassId: 12,
+  lecturerIds: [9],
+  groupIds: [7,8],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [1],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [2],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [3],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [4],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [5],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [6],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [7],
+}, {
+  disciplineClassId: 13,
+  lecturerIds: [9],
+  groupIds: [8],
+}, {
+  disciplineClassId: 14,
+  lecturerIds: [10],
+  groupIds: [9, 10],
+}, {
+  disciplineClassId: 15,
+  lecturerIds: [10],
+  groupIds: [9],
+}, {
+  disciplineClassId: 15,
+  lecturerIds: [10],
+  groupIds: [10],
+}, {
+  disciplineClassId: 16,
+  lecturerIds: [11],
+  groupIds: [1,2],
+}, {
+  disciplineClassId: 16,
+  lecturerIds: [11],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 17,
+  lecturerIds: [11],
+  groupIds: [1],
+}, {
+  disciplineClassId: 17,
+  lecturerIds: [11],
+  groupIds: [2],
+}, {
+  disciplineClassId: 17,
+  lecturerIds: [11],
+  groupIds: [3],
+}, {
+  disciplineClassId: 17,
+  lecturerIds: [11],
+  groupIds: [4],
+}, {
+  disciplineClassId: 18,
+  lecturerIds: [12],
+  groupIds: [7,8],
+}, {
+  disciplineClassId: 19,
+  lecturerIds: [12],
+  groupIds: [7],
+}, {
+  disciplineClassId: 19,
+  lecturerIds: [12],
+  groupIds: [8],
+}, {
+  disciplineClassId: 20,
+  lecturerIds: [12],
+  groupIds: [7],
+}, {
+  disciplineClassId: 20,
+  lecturerIds: [12],
+  groupIds: [8],
+}, {
+  disciplineClassId: 21,
+  lecturerIds: [12],
+  groupIds: [7,8],
+}, {
+  disciplineClassId: 22,
+  lecturerIds: [12],
+  groupIds: [7],
+}, {
+  disciplineClassId: 22,
+  lecturerIds: [12],
+  groupIds: [8],
+}, {
+  disciplineClassId: 23,
+  lecturerIds: [12],
+  groupIds: [7],
+}, {
+  disciplineClassId: 23,
+  lecturerIds: [12],
+  groupIds: [8],
+}, {
+  disciplineClassId: 24,
+  lecturerIds: [13],
+  groupIds: [9,10],
+}, {
+  disciplineClassId: 25,
+  lecturerIds: [13],
+  groupIds: [9],
+}, {
+  disciplineClassId: 25,
+  lecturerIds: [13],
+  groupIds: [10],
+}, {
+  disciplineClassId: 26,
+  lecturerIds: [13],
+  groupIds: [9,10],
+}, {
+  disciplineClassId: 27,
+  lecturerIds: [13],
+  groupIds: [9],
+}, {
+  disciplineClassId: 27,
+  lecturerIds: [13],
+  groupIds: [10],
+}, {
+  disciplineClassId: 28,
+  lecturerIds: [14],
+  groupIds: [9,10],
+}, {
+  disciplineClassId: 29,
+  lecturerIds: [14],
+  groupIds: [9],
+}, {
+  disciplineClassId: 29,
+  lecturerIds: [14],
+  groupIds: [10],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [3,4],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [5,6],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [7,8],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [9,10],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [3],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [4],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [5],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [6],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [7],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [8],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [9],
+}, {
+  disciplineClassId: 30,
+  lecturerIds: [15],
+  groupIds: [10],
 }];

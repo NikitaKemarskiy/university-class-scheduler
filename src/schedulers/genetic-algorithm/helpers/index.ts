@@ -18,7 +18,7 @@ export function convertWeeklyAvailableScheduleCellsToAvailability(
       [...Array(weeksPerCycle).keys()].flatMap(
         (weekNumber: number) => ({
           classNumber: availableClassNumber,
-          workingDay: workingDay as DayOfWeek,
+          workingDay: +workingDay as DayOfWeek,
           weekNumber,
         })
       )
