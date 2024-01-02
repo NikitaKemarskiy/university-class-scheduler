@@ -27,10 +27,10 @@ export class ScheduleCellAssigner {
         // console.log(`Initial population generated. First item: ${JSON.stringify(population[0])}`);
       }
 
-      // Log to get insight into the process of algorithm execution
+      // Log each 50 iterations to get insight into the process of algorithm execution
       if (i % 50 === 0 || i === this.geneticAlgorithmParams.maxIterations - 1) {
         console.dir({
-          iteration: i,
+          iteration: i + 1,
           timestamp: Date.now(),
           topIndividuals: [...population]
             .map((individual) => ({

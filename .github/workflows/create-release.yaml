@@ -1,0 +1,45 @@
+name: Create release
+
+# Run this action on the main branch
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  check-feature-version:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jwanga/actions-project-version-check@v1.3.0
+      id: actions_project_version_check
+      with:
+        file-to-check: package.json
+        target-branch: main
+
+  build:
+    needs: check-feature-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm run build
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+      APP_VERSION=$(jq -r .version package.json)
+      echo "NEXT_RELEASE_TAG_NAME=v${APP_VERSION}" >> $GITHUB_ENV
+    - run: echo ${{ env.NEXT_RELEASE_TAG_NAME }}
+    - uses: actions/create-release@v1
+      with:
+        tag_name: ${{ env.NEXT_RELEASE_TAG_NAME }}
+        release_name: ${{ env.NEXT_RELEASE_TAG_NAME }}
+        draft: false
+        prerelease: false
