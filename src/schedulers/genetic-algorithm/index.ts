@@ -10,6 +10,8 @@ import {
 } from "./helpers";
 import { ScheduleCellAssigner } from "./schedule-cell-assigner";
 
+export { DisciplineClassAssigned, GeneticAlgorithmParams } from "./types";
+
 export class GeneticAlgorithmScheduler extends Scheduler {
   private readonly params: GeneticAlgorithmSchedulerParams;
   private readonly scheduleCellAssigner: ScheduleCellAssigner;

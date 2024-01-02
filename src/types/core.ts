@@ -16,10 +16,11 @@ export type ScheduleCell = {
 export type AssignedScheduleCell = {
   scheduleCell: ScheduleCell;
   disciplineClassId: number;
-  online: boolean;
   lecturerIds: Array<number>; // Може бути кілька викладачів на одному занятті одночасно
-  // Якщо потребується кілька аудиторій для проведення одного заняття – це різні комірки розкладу
-  // (з різними викладачами та аудиторіями, проте з одними групами)
-  roomId: number;
   groupIds: Array<number>; // Може бути кілька груп (потік) в одній аудиторії
-}
+} & ({
+  online: false; // Офлайн заняття
+  roomId: number;
+} | {
+  online: true; // Онлайн заняття
+})

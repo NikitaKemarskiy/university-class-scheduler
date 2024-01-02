@@ -269,11 +269,18 @@ export class ScheduleCellAssigner {
       );
 
       for (let i = 1; i < assignedScheduleCellsByDaySorted.length; i++) {
-        const isTransitionPresent: boolean = this.params.rooms.get(assignedScheduleCellsByDaySorted[i].roomId)?.buildingId
-          !== this.params.rooms.get(assignedScheduleCellsByDaySorted[i - 1].roomId)?.buildingId;
-          
-        // Currently it doesn't matter what size (in classes) the window is
-        if (isTransitionPresent) {
+        const currentAssignedScheduleCell = assignedScheduleCellsByDaySorted[i];
+        const prevAssignedScheduleCell = assignedScheduleCellsByDaySorted[i - 1];
+
+        if (
+          currentAssignedScheduleCell.online !== prevAssignedScheduleCell.online
+          || (
+            !currentAssignedScheduleCell.online
+            && !prevAssignedScheduleCell.online
+            && this.params.rooms.get(currentAssignedScheduleCell.roomId)?.buildingId
+              !== this.params.rooms.get(prevAssignedScheduleCell.roomId)?.buildingId
+          )
+        ) {
           transitionsPerDay++;
         }
       }

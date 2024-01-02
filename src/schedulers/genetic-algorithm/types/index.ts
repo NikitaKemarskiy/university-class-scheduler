@@ -52,11 +52,14 @@ export type DisciplineClassAssigned = {
   lecturerIds: Array<number>;
   groupIds: Array<number>;
   assignedScheduleCellsPerCycle: number;
-  online: boolean;
-  appropriateRoomTypeIds: Array<number>;
   facultyId?: number;
   facultyDepartmentId?: number;
-}
+} & ({
+  online: false;
+  appropriateRoomTypeIds: Array<number>;
+} | {
+  online: true;
+})
 
 // Genetic algorithm types
 export type GeneticAlgorithmParams = {

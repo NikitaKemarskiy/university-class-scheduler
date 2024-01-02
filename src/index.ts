@@ -33,31 +33,43 @@ export type SchedulerParams = {
   lecturers: Array<Lecturer>,
 };
 
+export type ScheduleCellFilter = {
+  lecturerId?: number,
+  groupId?: number,
+  roomId?: number,
+  online?: boolean,
+};
+
 export class Schedule {
   constructor(private readonly assignedScheduleCells: Array<AssignedScheduleCell>) {}
 
-  getAssignedScheduleCells(filter: {
-    lecturerId?: number,
-    groupId?: number,
-    roomId?: number,
-  } = {}): Array<AssignedScheduleCell> {
+  getAssignedScheduleCells(filter: ScheduleCellFilter = {}): Array<AssignedScheduleCell> {
     let filteredAssignedScheduleCells = [...this.assignedScheduleCells];
 
-    if (filter.lecturerId) {
+    if (typeof filter.lecturerId === 'number') {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        // TODO: Narrow type correctly
         (assignedScheduleCell) => assignedScheduleCell.lecturerIds.includes(filter.lecturerId as number)
       );
     }
 
     if (filter.groupId) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        // TODO: Narrow type correctly
         (assignedScheduleCell) => assignedScheduleCell.groupIds.includes(filter.groupId as number)
       );
     }
 
     if (filter.roomId) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
-        (assignedScheduleCell) => assignedScheduleCell.roomId === filter.roomId as number
+        (assignedScheduleCell) => !assignedScheduleCell.online
+          && assignedScheduleCell.roomId === filter.roomId
+      );
+    }
+    
+    if (filter.online) {
+      filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
+        (assignedScheduleCell) => assignedScheduleCell.online === filter.online
       );
     }
 
@@ -72,6 +84,17 @@ export class Schedule {
         }
       }
     );
+  }
+
+  serializeToJSON(): string {
+    return JSON.stringify({ assignedScheduleCells: this.assignedScheduleCells });
+  }
+
+  static deserializeFromJSON(scheduleSerializedToJSON: string): Schedule {
+    const { assignedScheduleCells }: { assignedScheduleCells: Array<AssignedScheduleCell> } = JSON
+      .parse(scheduleSerializedToJSON);
+    
+    return new Schedule(assignedScheduleCells);
   }
 }
 
