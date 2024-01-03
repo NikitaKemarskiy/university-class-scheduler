@@ -27,9 +27,6 @@
     "url": "https://github.com/NikitaKemarskiy/university-class-scheduler/issues"
   },
   "homepage": "https://github.com/NikitaKemarskiy/university-class-scheduler#readme",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "files": [
     "dist"
   ],
