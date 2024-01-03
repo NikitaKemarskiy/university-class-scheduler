@@ -1,6 +1,6 @@
 {
   "name": "@nikitakemarskiy/university-class-scheduler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Library to generate university class schedule",
   "exports": {
     ".": {
