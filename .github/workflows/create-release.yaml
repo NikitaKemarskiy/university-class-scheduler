@@ -20,9 +20,12 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - run: |
-          echo "NEXT_RELEASE_TAG_NAME=v" ${{ steps.actions_project_version_check.outputs.version }} >> $GITHUB_ENV
+          APP_VERSION=$(jq -r .version package.json)
+          echo "NEXT_RELEASE_TAG_NAME=v${APP_VERSION}" >> $GITHUB_ENV
       - run: |
           echo "Next release tag name: " ${{ env.NEXT_RELEASE_TAG_NAME }}
       - uses: actions/create-release@v1
@@ -33,3 +36,19 @@ jobs:
           release_name: Release ${{ env.NEXT_RELEASE_TAG_NAME }}
           draft: false
           prerelease: false
+
+  publish-gpr:
+    needs: create-release
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

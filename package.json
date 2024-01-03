@@ -1,6 +1,6 @@
 {
-  "name": "@NikitaKemarskiy/university-class-scheduler",
-  "version": "0.0.1",
+  "name": "@nikitakemarskiy/university-class-scheduler",
+  "version": "0.0.2",
   "description": "Library to generate university class schedule",
   "exports": {
     ".": {
@@ -30,6 +30,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/node": "^20.6.3",
     "typescript": "^5.2.2"
