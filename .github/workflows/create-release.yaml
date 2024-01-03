@@ -7,15 +7,6 @@ on:
       - 'main'
 
 jobs:
-  check-feature-version:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: avides/actions-project-version-check@v1.4.0
-        id: actions_project_version_check
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          file-to-check: package.json
-
   build:
     needs: check-feature-version
     runs-on: ubuntu-latest
