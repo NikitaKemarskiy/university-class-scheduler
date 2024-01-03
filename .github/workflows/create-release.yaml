@@ -21,12 +21,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo "NEXT_RELEASE_TAG_NAME=v" ${{ steps.actions_project_version_check.outputs.version }} >> $GITHUB_ENV
-    - run: echo ${{ env.NEXT_RELEASE_TAG_NAME }}
-    - uses: actions/create-release@v1
-      with:
-        tag_name: ${{ env.NEXT_RELEASE_TAG_NAME }}
-        release_name: ${{ env.NEXT_RELEASE_TAG_NAME }}
-        draft: false
-        prerelease: false
+      - run: |
+          echo "NEXT_RELEASE_TAG_NAME=v" ${{ steps.actions_project_version_check.outputs.version }} >> $GITHUB_ENV
+      - run: |
+          echo "Next release tag name: " ${{ env.NEXT_RELEASE_TAG_NAME }}
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.NEXT_RELEASE_TAG_NAME }}
+          release_name: Release ${{ env.NEXT_RELEASE_TAG_NAME }}
+          draft: false
+          prerelease: false
