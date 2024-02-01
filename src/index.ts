@@ -46,28 +46,28 @@ export class Schedule {
   getAssignedScheduleCells(filter: ScheduleCellFilter = {}): Array<AssignedScheduleCell> {
     let filteredAssignedScheduleCells = [...this.assignedScheduleCells];
 
-    if (typeof filter.lecturerId === 'number') {
+    if (filter.lecturerId !== undefined) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
         // TODO: Narrow type correctly
         (assignedScheduleCell) => assignedScheduleCell.lecturerIds.includes(filter.lecturerId as number)
       );
     }
 
-    if (filter.groupId) {
+    if (filter.groupId !== undefined) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
         // TODO: Narrow type correctly
         (assignedScheduleCell) => assignedScheduleCell.groupIds.includes(filter.groupId as number)
       );
     }
 
-    if (filter.roomId) {
+    if (filter.roomId !== undefined) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
         (assignedScheduleCell) => !assignedScheduleCell.online
           && assignedScheduleCell.roomId === filter.roomId
       );
     }
     
-    if (filter.online) {
+    if (filter.online !== undefined) {
       filteredAssignedScheduleCells = filteredAssignedScheduleCells.filter(
         (assignedScheduleCell) => assignedScheduleCell.online === filter.online
       );
